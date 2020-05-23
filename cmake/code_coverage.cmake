@@ -73,12 +73,6 @@
 # target_code_coverage(theExe AUTO ALL EXCLUDE non_covered.cpp test/*) # As an executable target, adds to the 'ccov' and ccov-all' targets, and the reports will exclude the non-covered.cpp file, and any files in a test/ folder.
 # ~~~
 
-# Options
-option(
-  CODE_COVERAGE
-  "Builds targets with code coverage instrumentation. (Requires GCC or Clang)"
-  OFF)
-
 # Programs
 find_program(LLVM_COV_PATH llvm-cov)
 find_program(LLVM_PROFDATA_PATH llvm-profdata)
@@ -91,7 +85,7 @@ mark_as_advanced(FORCE LLVM_COV_PATH LLVM_PROFDATA_PATH LCOV_PATH GENHTML_PATH)
 set(CMAKE_COVERAGE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/ccov)
 
 # Common initialization/checks
-if(CODE_COVERAGE AND NOT CODE_COVERAGE_ADDED)
+if(NOT CODE_COVERAGE_ADDED)
   set(CODE_COVERAGE_ADDED ON)
 
   # Common Targets
