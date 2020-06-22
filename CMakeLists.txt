@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.5.0)
-project(cmake_common_scripts VERSION 0.1.0 LANGUAGES CXX)
-include(cmake/cmake_tools.cmake)
-include(cmake/code_coverage.cmake)
+project(cmake_common_scripts VERSION 0.1.0)
 
 configure_package()
 

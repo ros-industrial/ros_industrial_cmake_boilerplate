@@ -1,7 +1,7 @@
 ====================
 CMake Common Scripts
 ====================
-This contains a set useful cmake macros
+This contains a collection of useful CMake macros.
 
 .. contents:: Table of Contents
    :depth: 3
@@ -15,27 +15,37 @@ Clang Tidy
 
 This CMake macro will add clang tidy to a provided target.
 
-Macro:
+- [The clang-tidy documentation](https://clang.llvm.org/extra/clang-tidy/)
+- [The list of clang-tidy checks](https://clang.llvm.org/extra/clang-tidy/checks/list.html)
 
 .. code-block:: cmake
 
    target_clang_tidy(${PACKAGE_NAME} ${ARGN})
 
-This configures clang-tidy with default arguments to only produce warnings.
+This configures clang-tidy with default arguments where any violation will produce compiler warnings.
 
 .. code-block:: cmake
 
    target_clang_tidy(${PACKAGE_NAME} ${DEFAULT_CLANG_TIDY_WARNING_ARGS})
 
-This configures clang-tidy with default arguments to only produce errors.
+This configures clang-tidy with default arguments where any violation will produce compiler errors.
 
 .. code-block:: cmake
 
    target_clang_tidy(${PACKAGE_NAME} ${DEFAULT_CLANG_TIDY_ERROR_ARGS})
 
+
+.. note::
+
+   In some situation you may want to disable clang-tidy which is explained [here](https://clang.llvm.org/extra/clang-tidy/#id3).
+
 Include What You Use (IWYU)
 ---------------------------
 This CMake macro will add IWYU to a given target
+
+- [Why Include What You Use?](https://github.com/include-what-you-use/include-what-you-use/blob/master/docs/WhyIWYU.md)
+- [IWYU Documentation](https://github.com/include-what-you-use/include-what-you-use/blob/master/README.md)
+- [Exclude headers from check](https://github.com/include-what-you-use/include-what-you-use/blob/master/docs/IWYUPragmas.md)
 
 .. code-block:: cmake
 
@@ -66,6 +76,8 @@ CppCheck
 --------
 
 This CMake macro will add CppCheck to a given target
+
+- [CppCheck Wiki](https://sourceforge.net/p/cppcheck/wiki/Home/)
 
 .. code-block:: cmake
 
@@ -100,7 +112,7 @@ This CMake macro simplifies the CMake package configure and install by performin
 * It installs the provided targets
 * It exports the provided targets under the provided namespace
 * It installs the package.xml file
-* It create and install the ${PROJECT_NAME}-config.cmake and ${PROJECT_NAME}-config-version.cmake
+* It creates and installs the ${PROJECT_NAME}-config.cmake and ${PROJECT_NAME}-config-version.cmake
 
 .. code-block:: cmake
 

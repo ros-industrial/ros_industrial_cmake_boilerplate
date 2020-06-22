@@ -6,10 +6,13 @@
   <maintainer email="Levi.Armstrong@swri.org">Levi Armstrong</maintainer>
   <license>Apache 2.0</license>
   <author>Levi Armstrong</author>
+  <author>George Cave</author>
 
   <test_depend>gtest</test_depend>
   <test_depend>lcov</test_depend>
   <test_depend>libclang-dev</test_depend>
+  <test_depend>iwyu</test_depend>
+  <test_depend>cppcheck</test_depend>
 
   <export>
     <build_type>cmake</build_type>
