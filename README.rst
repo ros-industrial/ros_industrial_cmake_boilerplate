@@ -15,8 +15,8 @@ Clang Tidy
 
 This CMake macro will add clang tidy to a provided target.
 
-- [The clang-tidy documentation](https://clang.llvm.org/extra/clang-tidy/)
-- [The list of clang-tidy checks](https://clang.llvm.org/extra/clang-tidy/checks/list.html)
+- `The clang-tidy documentation <https://clang.llvm.org/extra/clang-tidy/>`_
+- `The list of clang-tidy checks <https://clang.llvm.org/extra/clang-tidy/checks/list.html>`_
 
 .. code-block:: cmake
 
@@ -37,15 +37,15 @@ This configures clang-tidy with default arguments where any violation will produ
 
 .. note::
 
-   In some situation you may want to disable clang-tidy which is explained [here](https://clang.llvm.org/extra/clang-tidy/#id3).
+   In some situation you may want to disable clang-tidy which is explained `here <https://clang.llvm.org/extra/clang-tidy/#id3>`_.
 
 Include What You Use (IWYU)
 ---------------------------
 This CMake macro will add IWYU to a given target
 
-- [Why Include What You Use?](https://github.com/include-what-you-use/include-what-you-use/blob/master/docs/WhyIWYU.md)
-- [IWYU Documentation](https://github.com/include-what-you-use/include-what-you-use/blob/master/README.md)
-- [Exclude headers from check](https://github.com/include-what-you-use/include-what-you-use/blob/master/docs/IWYUPragmas.md)
+- `Why Include What You Use? <https://github.com/include-what-you-use/include-what-you-use/blob/master/docs/WhyIWYU.md>`_
+- `IWYU Documentation <https://github.com/include-what-you-use/include-what-you-use/blob/master/README.md>`_
+- `Exclude headers from check <https://github.com/include-what-you-use/include-what-you-use/blob/master/docs/IWYUPragmas.md>`_
 
 .. code-block:: cmake
 
@@ -77,7 +77,7 @@ CppCheck
 
 This CMake macro will add CppCheck to a given target
 
-- [CppCheck Wiki](https://sourceforge.net/p/cppcheck/wiki/Home/)
+- `CppCheck Wiki <https://sourceforge.net/p/cppcheck/wiki/Home/>`_
 
 .. code-block:: cmake
 
