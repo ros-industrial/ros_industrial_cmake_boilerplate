@@ -118,6 +118,21 @@ This CMake macro simplifies the CMake package configure and install by performin
 
    configure_package(NAMESPACE <PACKAGE_NAMESPACE> TARGETS <TARGET_NAME_A> <TARGET_NAME_B>)
 
+Set Target CXX VERSION
+----------------------
+This CMake macro simplifies setting the CXX version for the target
+
+.. code-block:: cmake
+
+   target_cxx_version(${PACKAGE_NAME} <INTERFACE|PRIVATE|PUBLIC> VERSION <CXX_VERSION>)
+
+Example:
+Set the version to 14 and PUBLIC.
+
+.. code-block:: cmake
+
+   target_cxx_version(${PACKAGE_NAME} PUBLIC VERSION 14)
+
 Add Run Tests Target (Pure CMake Package)
 -----------------------------------------
 This CMake macro adds a custom target that will run the tests after they are finished building. You may pass an optional
