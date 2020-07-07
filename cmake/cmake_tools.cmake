@@ -16,7 +16,7 @@
 set(DEFAULT_CPPCHECK_ARGS "--enable=warning,performance,portability,missingInclude;--template=\"[{severity}][{id}] {message} {callstack} \(On {file}:{line}\)\";--suppress=missingIncludeSystem;--quiet;--verbose;--force")
 mark_as_advanced(DEFAULT_CPPCHECK_ARGS)
 
-set(DEFAULT_IWYU_ARGS "-Xiwyu")
+set(DEFAULT_IWYU_ARGS "-Xiwyu;any;-Xiwyu;iwyu;-Xiwyu;args")
 mark_as_advanced(DEFAULT_IWYU_ARGS)
 
 set(DEFAULT_CLANG_TIDY_WARNING_ARGS "-header-filter=.*" "-checks=-*,bugprone-*,cppcoreguidelines-avoid-goto,cppcoreguidelines-c-copy-assignment-signature,cppcoreguidelines-interfaces-global-init,cppcoreguidelines-narrowing-conversions,cppcoreguidelines-no-malloc,cppcoreguidelines-slicing,cppcoreguidelines-special-member-functions,misc-*,modernize-*,performance-*,readability-avoid-const-params-in-decls,readability-container-size-empty,readability-delete-null-pointer,readability-deleted-default,readability-else-after-return,readability-function-size,readability-identifier-naming,readability-inconsistent-declaration-parameter-name,readability-misleading-indentation,readability-misplaced-array-index,readability-non-const-parameter,readability-redundant-*,readability-simplify-*,readability-static-*,readability-string-compare,readability-uniqueptr-delete-release,readability-rary-objects")
