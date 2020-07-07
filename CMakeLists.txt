@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.5.0)
 project(cmake_common_scripts VERSION 0.1.0)
+include(cmake/cmake_tools.cmake)
 
 configure_package()
 
