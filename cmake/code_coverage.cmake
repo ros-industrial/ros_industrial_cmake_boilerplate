@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2018 by George Cave - gcave@stablecoder.ca
+# Copyright (C) 2018-2020 by George Cave - gcave@stablecoder.ca
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -79,7 +79,12 @@ find_program(LLVM_PROFDATA_PATH llvm-profdata)
 find_program(LCOV_PATH lcov)
 find_program(GENHTML_PATH genhtml)
 # Hide behind the 'advanced' mode flag for GUI/ccmake
-mark_as_advanced(FORCE LLVM_COV_PATH LLVM_PROFDATA_PATH LCOV_PATH GENHTML_PATH)
+mark_as_advanced(
+  FORCE
+  LLVM_COV_PATH
+  LLVM_PROFDATA_PATH
+  LCOV_PATH
+  GENHTML_PATH)
 
 # Variables
 set(CMAKE_COVERAGE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/ccov)
@@ -106,8 +111,11 @@ if(NOT CODE_COVERAGE_ADDED)
       # Version number checking for 'EXCLUDE' compatibility
       execute_process(COMMAND ${LLVM_COV_PATH} --version
                       OUTPUT_VARIABLE LLVM_COV_VERSION_CALL_OUTPUT)
-      string(REGEX MATCH "[0-9]+\\.[0-9]+\\.[0-9]+" LLVM_COV_VERSION
-                   ${LLVM_COV_VERSION_CALL_OUTPUT})
+      string(
+        REGEX MATCH
+              "[0-9]+\\.[0-9]+\\.[0-9]+"
+              LLVM_COV_VERSION
+              ${LLVM_COV_VERSION_CALL_OUTPUT})
 
       if(LLVM_COV_VERSION VERSION_LESS "7.0.0")
         message(
@@ -130,13 +138,17 @@ if(NOT CODE_COVERAGE_ADDED)
       COMMAND ;
       COMMENT "libs ready for coverage report.")
 
-  elseif(CMAKE_COMPILER_IS_GNUCXX)
+  elseif(CMAKE_C_COMPILER_ID MATCHES "GNU"
+          OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     # Messages
     message(STATUS "Building with lcov Code Coverage Tools")
 
     if(CMAKE_BUILD_TYPE)
       string(TOUPPER ${CMAKE_BUILD_TYPE} upper_build_type)
-      if(NOT ${upper_build_type} STREQUAL "DEBUG")
+      if(NOT
+         ${upper_build_type}
+         STREQUAL
+         "DEBUG")
         message(
           WARNING
             "Code coverage results with an optimized (non-Debug) build may be misleading"
@@ -185,22 +197,42 @@ endif()
 # Required:
 # TARGET_NAME - Name of the target to generate code coverage for.
 # Optional:
+# PUBLIC - Sets the visibility for added compile options to targets to PUBLIC instead of the default of PRIVATE.
+# PUBLIC - Sets the visibility for added compile options to targets to INTERFACE instead of the default of PRIVATE.
 # AUTO - Adds the target to the 'ccov' target so that it can be run in a batch with others easily. Effective on executable targets.
 # ALL - Adds the target to the 'ccov-all' and 'ccov-all-report' targets, which merge several executable targets coverage data to a single report. Effective on executable targets.
 # EXTERNAL - For GCC's lcov, allows the profiling of 'external' files from the processing directory
 # COVERAGE_TARGET_NAME - For executables ONLY, changes the outgoing target name so instead of `ccov-${TARGET_NAME}` it becomes `ccov-${COVERAGE_TARGET_NAME}`.
 # EXCLUDE <REGEX_PATTERNS> - Excludes files of the patterns provided from coverage. **These do not copy to the 'all' targets.**
 # OBJECTS <TARGETS> - For executables ONLY, if the provided targets are shared libraries, adds coverage information to the output
-# ARGS <ARGUMENTS> - For executables ONLY, append sthe given arguments to the associated ccov-* executable call
+# ARGS <ARGUMENTS> - For executables ONLY, appends the given arguments to the associated ccov-* executable call
 # ~~~
 function(target_code_coverage TARGET_NAME)
   # Argument parsing
-  set(options AUTO ALL EXTERNAL)
+  set(options
+      AUTO
+      ALL
+      EXTERNAL
+      PUBLIC
+      INTERFACE)
   set(single_value_keywords COVERAGE_TARGET_NAME)
   set(multi_value_keywords EXCLUDE OBJECTS ARGS)
   cmake_parse_arguments(
-    target_code_coverage "${options}" "${single_value_keywords}"
-    "${multi_value_keywords}" ${ARGN})
+    target_code_coverage
+    "${options}"
+    "${single_value_keywords}"
+    "${multi_value_keywords}"
+    ${ARGN})
+
+  # Set the visibility of target functions to PUBLIC, INTERFACE or default to
+  # PRIVATE.
+  if(target_code_coverage_PUBLIC)
+    set(TARGET_VISIBILITY PUBLIC)
+  elseif(target_code_coverage_INTERFACE)
+    set(TARGET_VISIBILITY INTERFACE)
+  else()
+    set(TARGET_VISIBILITY PRIVATE)
+  endif()
 
   if(NOT target_code_coverage_COVERAGE_TARGET_NAME)
     # If a specific name was given, use that instead.
@@ -212,20 +244,24 @@ function(target_code_coverage TARGET_NAME)
     # Add code coverage instrumentation to the target's linker command
     if(CMAKE_C_COMPILER_ID MATCHES "(Apple)?[Cc]lang"
        OR CMAKE_CXX_COMPILER_ID MATCHES "(Apple)?[Cc]lang")
-      target_compile_options(${TARGET_NAME} PRIVATE -fprofile-instr-generate
-                                                    -fcoverage-mapping)
-      set_property(
-        TARGET ${TARGET_NAME}
-        APPEND_STRING
-        PROPERTY LINK_FLAGS "-fprofile-instr-generate ")
-      set_property(
-        TARGET ${TARGET_NAME}
-        APPEND_STRING
-        PROPERTY LINK_FLAGS "-fcoverage-mapping ")
-    elseif(CMAKE_COMPILER_IS_GNUCXX)
-      target_compile_options(${TARGET_NAME} PRIVATE -fprofile-arcs
-                                                    -ftest-coverage)
-      target_link_libraries(${TARGET_NAME} PRIVATE gcov)
+      target_compile_options(
+        ${TARGET_NAME}
+        ${TARGET_VISIBILITY}
+        -fprofile-instr-generate
+        -fcoverage-mapping)
+      target_link_options(
+        ${TARGET_NAME}
+        ${TARGET_VISIBILITY}
+        -fprofile-instr-generate
+        -fcoverage-mapping)
+    elseif(CMAKE_C_COMPILER_ID MATCHES "GNU"
+            OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+      target_compile_options(
+        ${TARGET_NAME}
+        ${TARGET_VISIBILITY}
+        -fprofile-arcs
+        -ftest-coverage)
+      target_link_libraries(${TARGET_NAME} ${TARGET_VISIBILITY} gcov)
     endif()
 
     # Targets
@@ -287,9 +323,10 @@ function(target_code_coverage TARGET_NAME)
         # Merge the generated profile data so llvm-cov can process it
         add_custom_target(
           ccov-processing-${target_code_coverage_COVERAGE_TARGET_NAME}
-          COMMAND ${LLVM_PROFDATA_PATH} merge -sparse
-                  ${target_code_coverage_COVERAGE_TARGET_NAME}.profraw -o
-                  ${target_code_coverage_COVERAGE_TARGET_NAME}.profdata
+          COMMAND
+            ${LLVM_PROFDATA_PATH} merge -sparse
+            ${target_code_coverage_COVERAGE_TARGET_NAME}.profraw -o
+            ${target_code_coverage_COVERAGE_TARGET_NAME}.profdata
           DEPENDS ccov-run-${target_code_coverage_COVERAGE_TARGET_NAME})
 
         # Ignore regex only works on LLVM >= 7
@@ -329,7 +366,8 @@ function(target_code_coverage TARGET_NAME)
             -format="html" ${EXCLUDE_REGEX}
           DEPENDS ccov-processing-${target_code_coverage_COVERAGE_TARGET_NAME})
 
-      elseif(CMAKE_COMPILER_IS_GNUCXX)
+      elseif(CMAKE_C_COMPILER_ID MATCHES "GNU"
+              OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
         set(COVERAGE_INFO
             "${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${target_code_coverage_COVERAGE_TARGET_NAME}.info"
         )
@@ -342,8 +380,11 @@ function(target_code_coverage TARGET_NAME)
 
         # Generate exclusion string for use
         foreach(EXCLUDE_ITEM ${target_code_coverage_EXCLUDE})
-          set(EXCLUDE_REGEX ${EXCLUDE_REGEX} --remove ${COVERAGE_INFO}
-                            '${EXCLUDE_ITEM}')
+          set(EXCLUDE_REGEX
+              ${EXCLUDE_REGEX}
+              --remove
+              ${COVERAGE_INFO}
+              '${EXCLUDE_ITEM}')
         endforeach()
 
         if(EXCLUDE_REGEX)
@@ -395,7 +436,8 @@ function(target_code_coverage TARGET_NAME)
         endif()
         add_dependencies(ccov ccov-${target_code_coverage_COVERAGE_TARGET_NAME})
 
-        if(NOT CMAKE_COMPILER_IS_GNUCXX)
+        if(NOT CMAKE_C_COMPILER_ID MATCHES "GNU"
+           OR NOT CMAKE_CXX_COMPILER_ID MATCHES "GNU")
           if(NOT TARGET ccov-report)
             add_custom_target(ccov-report)
           endif()
@@ -429,7 +471,8 @@ function(add_code_coverage)
      OR CMAKE_CXX_COMPILER_ID MATCHES "(Apple)?[Cc]lang")
     add_compile_options(-fprofile-instr-generate -fcoverage-mapping)
     add_link_options(-fprofile-instr-generate -fcoverage-mapping)
-  elseif(CMAKE_COMPILER_IS_GNUCXX)
+  elseif(CMAKE_C_COMPILER_ID MATCHES "GNU"
+          OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     add_compile_options(-fprofile-arcs -ftest-coverage)
     link_libraries(gcov)
   endif()
@@ -447,8 +490,12 @@ endfunction()
 function(add_code_coverage_all_targets)
   # Argument parsing
   set(multi_value_keywords EXCLUDE)
-  cmake_parse_arguments(add_code_coverage_all_targets "" ""
-                        "${multi_value_keywords}" ${ARGN})
+  cmake_parse_arguments(
+    add_code_coverage_all_targets
+    ""
+    ""
+    "${multi_value_keywords}"
+    ${ARGN})
 
   if(CODE_COVERAGE)
     if(CMAKE_C_COMPILER_ID MATCHES "(Apple)?[Cc]lang"
@@ -504,7 +551,8 @@ function(add_code_coverage_all_targets)
           -format="html" ${EXCLUDE_REGEX}
         DEPENDS ccov-all-processing)
 
-    elseif(CMAKE_COMPILER_IS_GNUCXX)
+    elseif(CMAKE_C_COMPILER_ID MATCHES "GNU"
+            OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
       set(COVERAGE_INFO "${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/all-merged.info")
 
       # Nothing required for gcov
@@ -513,8 +561,11 @@ function(add_code_coverage_all_targets)
       # Exclusion regex string creation
       set(EXCLUDE_REGEX)
       foreach(EXCLUDE_ITEM ${add_code_coverage_all_targets_EXCLUDE})
-        set(EXCLUDE_REGEX ${EXCLUDE_REGEX} --remove ${COVERAGE_INFO}
-                          '${EXCLUDE_ITEM}')
+        set(EXCLUDE_REGEX
+            ${EXCLUDE_REGEX}
+            --remove
+            ${COVERAGE_INFO}
+            '${EXCLUDE_ITEM}')
       endforeach()
 
       if(EXCLUDE_REGEX)
