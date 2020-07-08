@@ -172,7 +172,8 @@ if(NOT CODE_COVERAGE_ADDED)
                                          ${CMAKE_BINARY_DIR} --zerocounters)
 
   else()
-    message(FATAL_ERROR "Code coverage requires Clang or GCC. Aborting.")
+    set(CODE_COVERAGE_ADDED OFF)
+    message(WARNING "Code coverage requires Clang or GCC. Aborting.")
   endif()
 endif()
 
@@ -239,7 +240,7 @@ function(target_code_coverage TARGET_NAME)
     set(target_code_coverage_COVERAGE_TARGET_NAME ${TARGET_NAME})
   endif()
 
-  if(CODE_COVERAGE)
+  if(CODE_COVERAGE_ADDED)
 
     # Add code coverage instrumentation to the target's linker command
     if(CMAKE_C_COMPILER_ID MATCHES "(Apple)?[Cc]lang"
@@ -497,7 +498,7 @@ function(add_code_coverage_all_targets)
     "${multi_value_keywords}"
     ${ARGN})
 
-  if(CODE_COVERAGE)
+  if(CODE_COVERAGE_ADDED)
     if(CMAKE_C_COMPILER_ID MATCHES "(Apple)?[Cc]lang"
        OR CMAKE_CXX_COMPILER_ID MATCHES "(Apple)?[Cc]lang")
 
