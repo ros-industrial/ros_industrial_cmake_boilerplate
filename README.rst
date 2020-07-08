@@ -22,19 +22,19 @@ This CMake macro will add clang tidy to a provided target.
 
 .. code-block:: cmake
 
-   target_clang_tidy(${PACKAGE_NAME} ${ARGN})
+   target_clang_tidy(${PACKAGE_NAME} ARGUMENTS ${ARGN})
 
 This configures clang-tidy with default arguments where any violation will produce compiler warnings.
 
 .. code-block:: cmake
 
-   target_clang_tidy(${PACKAGE_NAME} ${DEFAULT_CLANG_TIDY_WARNING_ARGS})
+   target_clang_tidy(${PACKAGE_NAME} ARGUMENTS ${DEFAULT_CLANG_TIDY_WARNING_ARGS})
 
 This configures clang-tidy with default arguments where any violation will produce compiler errors.
 
 .. code-block:: cmake
 
-   target_clang_tidy(${PACKAGE_NAME} ${DEFAULT_CLANG_TIDY_ERROR_ARGS})
+   target_clang_tidy(${PACKAGE_NAME} ARGUMENTS ${DEFAULT_CLANG_TIDY_ERROR_ARGS})
 
 
 .. note::
@@ -54,26 +54,26 @@ This CMake macro will add IWYU to a given target
 
 .. code-block:: cmake
 
-   target_include_what_you_use(${PACKAGE_NAME} ${ARGN})
+   target_include_what_you_use(${PACKAGE_NAME} ARGUMENTS ${ARGN})
 
 This CMake macro will add IWYU to a given target with default arguments.
 
 .. code-block:: cmake
 
-   target_include_what_you_use(${PACKAGE_NAME} ${DEFAULT_IWYU_ARGS})
+   target_include_what_you_use(${PACKAGE_NAME} ARGUMENTS ${DEFAULT_IWYU_ARGS})
 
 
 This CMake macro will add IWYU to all targets
 
 .. code-block:: cmake
 
-   include_what_you_use(${ARGN})
+   include_what_you_use(ARGUMENTS ${ARGN})
 
 This CMake macro will add IWYU to all targets with default arguments.
 
 .. code-block:: cmake
 
-   include_what_you_use(${DEFAULT_IWYU_ARGS})
+   include_what_you_use(ARGUMENTS ${DEFAULT_IWYU_ARGS})
 
 
 CppCheck
@@ -87,28 +87,28 @@ This CMake macro will add CppCheck to a given target
 
 .. code-block:: cmake
 
-   target_cppcheck(${PACKAGE_NAME} ${ARGN})
+   target_cppcheck(${PACKAGE_NAME} ARGUMENTS ${ARGN})
 
 
 This CMake macro will add CppCheck to a given target with default arguments.
 
 .. code-block:: cmake
 
-   target_cppcheck(${PACKAGE_NAME} ${DEFAULT_CPPCHECK_ARGS})
+   target_cppcheck(${PACKAGE_NAME} ARGUMENTS ${DEFAULT_CPPCHECK_ARGS})
 
 
 This CMake macro will add CppCheck to all targets
 
 .. code-block:: cmake
 
-   cppcheck(${ARGN})
+   cppcheck(ARGUMENTS ${ARGN})
 
 
 This CMake macro will add CppCheck to all targets with default arguments.
 
 .. code-block:: cmake
 
-   cppcheck(${DEFAULT_CPPCHECK_ARGS})
+   cppcheck(ARGUMENTS ${DEFAULT_CPPCHECK_ARGS})
 
 
 Configure (Pure CMake Package)
