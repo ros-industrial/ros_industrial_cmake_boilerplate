@@ -28,10 +28,15 @@ mark_as_advanced(DEFAULT_CLANG_TIDY_ERROR_ARGS)
 # Adds clang-tidy checks to the target, with the given arguments being used
 # as the options set.
 macro(target_clang_tidy target)
-  if(CLANG_TIDY_EXE)
-    get_target_property(${target}_type ${target} TYPE)
-    if (NOT ${${target}_type} STREQUAL "INTERFACE_LIBRARY")
-      set_target_properties("${target}" PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_EXE};${ARGN}")
+  set(oneValueArgs ENABLE)
+  cmake_parse_arguments(ARG "" "${oneValueArgs}" "" ${ARGN})
+
+  if((NOT DEFINED ARG_ENABLE) OR (ARG_ENABLE))
+    if(CLANG_TIDY_EXE)
+      get_target_property(${target}_type ${target} TYPE)
+      if (NOT ${${target}_type} STREQUAL "INTERFACE_LIBRARY")
+        set_target_properties("${target}" PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_EXE};${ARGN}")
+      endif()
     endif()
   endif()
 endmacro()
@@ -39,29 +44,49 @@ endmacro()
 # Adds include_what_you_use to the target, with the given arguments being
 # used as the options set.
 macro(target_include_what_you_use target)
-  if(IWYU_EXE)
-    set_target_properties("${target}" PROPERTIES CXX_INCLUDE_WHAT_YOU_USE "${IWYU_EXE};${ARGN}")
+  set(oneValueArgs ENABLE)
+  cmake_parse_arguments(ARG "" "${oneValueArgs}" "" ${ARGN})
+
+  if((NOT DEFINED ARG_ENABLE) OR (ARG_ENABLE))
+    if(IWYU_EXE)
+      set_target_properties("${target}" PROPERTIES CXX_INCLUDE_WHAT_YOU_USE "${IWYU_EXE};${ARGN}")
+    endif()
   endif()
 endmacro()
 
 # Adds include_what_you_use to all targets, with the given arguments being used as the options set.
 macro(include_what_you_use)
-  if(IWYU_EXE)
-    set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE "${IWYU_EXE};${ARGN}")
+  set(oneValueArgs ENABLE)
+  cmake_parse_arguments(ARG "" "${oneValueArgs}" "" ${ARGN})
+
+  if((NOT DEFINED ARG_ENABLE) OR (ARG_ENABLE))
+    if(IWYU_EXE)
+      set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE "${IWYU_EXE};${ARGN}")
+    endif()
   endif()
 endmacro()
 
 # Adds cppcheck to the target, with the given arguments being used as the options set.
 macro(target_cppcheck target)
-  if(CPPCHECK_EXE)
-    set_target_properties("${target}" PROPERTIES CXX_CPPCHECK "${CPPCHECK_EXE};${ARGN}")
+  set(oneValueArgs ENABLE)
+  cmake_parse_arguments(ARG "" "${oneValueArgs}" "" ${ARGN})
+
+  if((NOT DEFINED ARG_ENABLE) OR (ARG_ENABLE))
+    if(CPPCHECK_EXE)
+      set_target_properties("${target}" PROPERTIES CXX_CPPCHECK "${CPPCHECK_EXE};${ARGN}")
+    endif()
   endif()
 endmacro()
 
 # Adds cppcheck to all targets, with the given arguments being used as the options set.
 macro(cppcheck)
-  if(CPPCHECK_EXE)
-    set(CMAKE_CXX_CLANG_TIDY "${CPPCHECK_EXE};${ARGN}")
+  set(oneValueArgs ENABLE)
+  cmake_parse_arguments(ARG "" "${oneValueArgs}" "" ${ARGN})
+
+  if((NOT DEFINED ARG_ENABLE) OR (ARG_ENABLE))
+    if(CPPCHECK_EXE)
+      set(CMAKE_CXX_CLANG_TIDY "${CPPCHECK_EXE};${ARGN}")
+    endif()
   endif()
 endmacro()
 

@@ -18,6 +18,8 @@ This CMake macro will add clang tidy to a provided target.
 - `The clang-tidy documentation <https://clang.llvm.org/extra/clang-tidy/>`_
 - `The list of clang-tidy checks <https://clang.llvm.org/extra/clang-tidy/checks/list.html>`_
 
+.. note:: Each of the macros can take an ENABLE ON/OFF so they can easly be enable by external flag. If not provided it is automatically enabled.
+
 .. code-block:: cmake
 
    target_clang_tidy(${PACKAGE_NAME} ${ARGN})
@@ -46,6 +48,9 @@ This CMake macro will add IWYU to a given target
 - `Why Include What You Use? <https://github.com/include-what-you-use/include-what-you-use/blob/master/docs/WhyIWYU.md>`_
 - `IWYU Documentation <https://github.com/include-what-you-use/include-what-you-use/blob/master/README.md>`_
 - `Exclude headers from check <https://github.com/include-what-you-use/include-what-you-use/blob/master/docs/IWYUPragmas.md>`_
+- `Avoid Common Issues <https://www.incredibuild.com/blog/include-what-you-use-how-to-best-utilize-this-tool-and-avoid-common-issues/>`_
+
+.. note:: Each of the macros can take an ENABLE ON/OFF so they can easly be enable by external flag. If not provided it is automatically enabled.
 
 .. code-block:: cmake
 
@@ -64,7 +69,6 @@ This CMake macro will add IWYU to all targets
 
    include_what_you_use(${ARGN})
 
-
 This CMake macro will add IWYU to all targets with default arguments.
 
 .. code-block:: cmake
@@ -78,6 +82,8 @@ CppCheck
 This CMake macro will add CppCheck to a given target
 
 - `CppCheck Wiki <https://sourceforge.net/p/cppcheck/wiki/Home/>`_
+
+.. note:: Each of the macros can take an ENABLE ON/OFF so they can easly be enable by external flag. If not provided it is automatically enabled.
 
 .. code-block:: cmake
 
