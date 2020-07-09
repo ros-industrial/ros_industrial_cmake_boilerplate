@@ -200,6 +200,8 @@ From this point, there are two primary methods for adding instrumentation to tar
 
 To add coverage targets, such as calling `make ccov` to generate the actual coverage information for perusal or consumption, call `target_code_coverage(<TARGET_NAME>)` on an *executable* target.
 
+.. note:: Each of the macros can take an ENABLE ON/OFF so they can easly be enable by external flag. If not provided it is automatically enabled.
+
 Examples
 ++++++++
 
