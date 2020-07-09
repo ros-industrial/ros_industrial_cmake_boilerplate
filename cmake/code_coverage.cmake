@@ -205,6 +205,7 @@ endif()
 # EXTERNAL - For GCC's lcov, allows the profiling of 'external' files from the processing directory
 # COVERAGE_TARGET_NAME - For executables ONLY, changes the outgoing target name so instead of `ccov-${TARGET_NAME}` it becomes `ccov-${COVERAGE_TARGET_NAME}`.
 # EXCLUDE <REGEX_PATTERNS> - Excludes files of the patterns provided from coverage. **These do not copy to the 'all' targets.**
+# ENABLE <0|NO|FALSE - 1|YES|TRUE> - Enable/Desables code coverage. Defaults to enabled.
 # OBJECTS <TARGETS> - For executables ONLY, if the provided targets are shared libraries, adds coverage information to the output
 # ARGS <ARGUMENTS> - For executables ONLY, appends the given arguments to the associated ccov-* executable call
 # ~~~
@@ -216,7 +217,7 @@ function(target_code_coverage TARGET_NAME)
       EXTERNAL
       PUBLIC
       INTERFACE)
-  set(single_value_keywords COVERAGE_TARGET_NAME)
+  set(single_value_keywords COVERAGE_TARGET_NAME ENABLE)
   set(multi_value_keywords EXCLUDE OBJECTS ARGS)
   cmake_parse_arguments(
     target_code_coverage
@@ -240,7 +241,7 @@ function(target_code_coverage TARGET_NAME)
     set(target_code_coverage_COVERAGE_TARGET_NAME ${TARGET_NAME})
   endif()
 
-  if(CODE_COVERAGE_ADDED)
+  if(CODE_COVERAGE_ADDED AND ((NOT DEFINED target_code_coverage_ENABLE) OR (target_code_coverage_ENABLE)))
 
     # Add code coverage instrumentation to the target's linker command
     if(CMAKE_C_COMPILER_ID MATCHES "(Apple)?[Cc]lang"
@@ -467,15 +468,23 @@ endfunction()
 # Adds code coverage instrumentation to all targets in the current directory and
 # any subdirectories. To add coverage instrumentation to only specific targets,
 # use `target_code_coverage`.
+# ~~~
+# Optional:
+# ENABLE <0|NO|FALSE - 1|YES|TRUE> - Enable/Desables code coverage. Defaults to enabled.
 function(add_code_coverage)
-  if(CMAKE_C_COMPILER_ID MATCHES "(Apple)?[Cc]lang"
-     OR CMAKE_CXX_COMPILER_ID MATCHES "(Apple)?[Cc]lang")
-    add_compile_options(-fprofile-instr-generate -fcoverage-mapping)
-    add_link_options(-fprofile-instr-generate -fcoverage-mapping)
-  elseif(CMAKE_C_COMPILER_ID MATCHES "GNU"
-          OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-    add_compile_options(-fprofile-arcs -ftest-coverage)
-    link_libraries(gcov)
+  set(oneValueArgs ENABLE)
+  cmake_parse_arguments(add_code_coverage "" "${oneValueArgs}" "" ${ARGN})
+
+  if(CODE_COVERAGE_ADDED AND ((NOT DEFINED add_code_coverage_ENABLE) OR (add_code_coverage_ENABLE)))
+    if(CMAKE_C_COMPILER_ID MATCHES "(Apple)?[Cc]lang"
+       OR CMAKE_CXX_COMPILER_ID MATCHES "(Apple)?[Cc]lang")
+      add_compile_options(-fprofile-instr-generate -fcoverage-mapping)
+      add_link_options(-fprofile-instr-generate -fcoverage-mapping)
+    elseif(CMAKE_C_COMPILER_ID MATCHES "GNU"
+            OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+      add_compile_options(-fprofile-arcs -ftest-coverage)
+      link_libraries(gcov)
+    endif()
   endif()
 endfunction()
 
@@ -487,18 +496,20 @@ endfunction()
 # ~~~
 # Optional:
 # EXCLUDE <REGEX_PATTERNS> - Excludes files of the regex patterns provided from coverage.
+# ENABLE <0|NO|FALSE - 1|YES|TRUE> - Enable/Desables code coverage. Defaults to enabled.
 # ~~~
 function(add_code_coverage_all_targets)
   # Argument parsing
+  set(oneValueArgs ENABLE)
   set(multi_value_keywords EXCLUDE)
   cmake_parse_arguments(
     add_code_coverage_all_targets
     ""
-    ""
+    "${oneValueArgs}"
     "${multi_value_keywords}"
     ${ARGN})
 
-  if(CODE_COVERAGE_ADDED)
+  if(CODE_COVERAGE_ADDED AND ((NOT DEFINED add_code_coverage_all_targets_ENABLE) OR (add_code_coverage_all_targets_ENABLE)))
     if(CMAKE_C_COMPILER_ID MATCHES "(Apple)?[Cc]lang"
        OR CMAKE_CXX_COMPILER_ID MATCHES "(Apple)?[Cc]lang")
 
