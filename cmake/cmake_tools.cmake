@@ -28,8 +28,9 @@ mark_as_advanced(DEFAULT_CLANG_TIDY_ERROR_ARGS)
 # Adds clang-tidy checks to the target, with the given arguments being used
 # as the options set.
 macro(target_clang_tidy target)
-  set(oneValueArgs ENABLE ARGUMENTS)
-  cmake_parse_arguments(ARG "" "${oneValueArgs}" "" ${ARGN})
+  set(oneValueArgs ENABLE)
+  set(multiValueArgs ARGUMENTS)
+  cmake_parse_arguments(ARG "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   if((NOT DEFINED ARG_ENABLE) OR (ARG_ENABLE))
     if(CLANG_TIDY_EXE)
@@ -50,8 +51,9 @@ endmacro()
 # Adds include_what_you_use to the target, with the given arguments being
 # used as the options set.
 macro(target_include_what_you_use target)
-  set(oneValueArgs ENABLE ARGUMENTS)
-  cmake_parse_arguments(ARG "" "${oneValueArgs}" "" ${ARGN})
+  set(oneValueArgs ENABLE)
+  set(multiValueArgs ARGUMENTS)
+  cmake_parse_arguments(ARG "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   if((NOT DEFINED ARG_ENABLE) OR (ARG_ENABLE))
     if(IWYU_EXE)
@@ -68,8 +70,9 @@ endmacro()
 
 # Adds include_what_you_use to all targets, with the given arguments being used as the options set.
 macro(include_what_you_use)
-  set(oneValueArgs ENABLE ARGUMENTS)
-  cmake_parse_arguments(ARG "" "${oneValueArgs}" "" ${ARGN})
+  set(oneValueArgs ENABLE)
+  set(multiValueArgs ARGUMENTS)
+  cmake_parse_arguments(ARG "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   if((NOT DEFINED ARG_ENABLE) OR (ARG_ENABLE))
     if(IWYU_EXE)
@@ -86,8 +89,9 @@ endmacro()
 
 # Adds cppcheck to the target, with the given arguments being used as the options set.
 macro(target_cppcheck target)
-  set(oneValueArgs ENABLE ARGUMENTS)
-  cmake_parse_arguments(ARG "" "${oneValueArgs}" "" ${ARGN})
+  set(oneValueArgs ENABLE)
+  set(multiValueArgs ARGUMENTS)
+  cmake_parse_arguments(ARG "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   if((NOT DEFINED ARG_ENABLE) OR (ARG_ENABLE))
     if(CPPCHECK_EXE)
@@ -104,15 +108,16 @@ endmacro()
 
 # Adds cppcheck to all targets, with the given arguments being used as the options set.
 macro(cppcheck)
-  set(oneValueArgs ENABLE ARGUMENTS)
-  cmake_parse_arguments(ARG "" "${oneValueArgs}" "" ${ARGN})
+  set(oneValueArgs ENABLE)
+  set(multiValueArgs ARGUMENTS)
+  cmake_parse_arguments(ARG "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   if((NOT DEFINED ARG_ENABLE) OR (ARG_ENABLE))
     if(CPPCHECK_EXE)
       if(ARG_ARGUMENTS)
-        set(CMAKE_CXX_CLANG_TIDY "${CPPCHECK_EXE};${ARG_ARGUMENTS}")
+        set(CMAKE_CXX_CPPCHECK "${CPPCHECK_EXE};${ARG_ARGUMENTS}")
       else()
-        set(CMAKE_CXX_CLANG_TIDY "${CPPCHECK_EXE};${DEFAULT_CPPCHECK_ARGS}")
+        set(CMAKE_CXX_CPPCHECK "${CPPCHECK_EXE};${DEFAULT_CPPCHECK_ARGS}")
       endif()
     else()
       message(WARNING "Using cppcheck but cppcheck executable was not found!")
@@ -182,17 +187,19 @@ endmacro()
 
 # This macro add a custom target that will run the tests after they are finished building when
 # This is added to allow ability do disable the running of tests as part of the build for CI which calls make test
-#    * add_run_tests_target(Target) adds run test target
-#    * add_run_tests_target(Target true) adds run test target
-#    * add_run_tests_target(Target false) adds empty run test target
+#    * add_run_tests_target() adds run test target
+#    * add_run_tests_target(ENABLE ON/TRUE) adds run test target
+#    * add_run_tests_target(ENABLE OFF/FALSE) adds empty run test target
 macro(add_run_tests_target)
-  cmake_parse_arguments(ARG "true;false" "" "" ${ARGN})
-  if(ARG_false)
-    add_custom_target(run_tests)
-  else()
+  set(oneValueArgs ENABLE)
+  cmake_parse_arguments(ARG "" "${oneValueArgs}" "" ${ARGN})
+
+  if((NOT DEFINED ARG_ENABLE) OR (ARG_ENABLE))
     add_custom_target(run_tests ALL
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         COMMAND ${CMAKE_CTEST_COMMAND} -V -O "/tmp/${PROJECT_NAME}_ctest.log" -C $<CONFIGURATION>)
+  else()
+    add_custom_target(run_tests)
   endif()
 endmacro()
 
@@ -200,16 +207,18 @@ endmacro()
 # Usage: add_run_benchmark_target(benchmark_name)
 # Results are saved to /test/benchmarks/${benchmark_name}_results.json in the build directory
 #    * add_run_benchmark_target(benchmark_name) adds run benchmark target
-#    * add_run_benchmark_target(benchmark_name true) adds run benchmark target
-#    * add_run_benchmark_target(benchmark_name false) adds empty run benchmark target
+#    * add_run_benchmark_target(benchmark_name ENABLE ON/TRUE) adds run benchmark target
+#    * add_run_benchmark_target(benchmark_name ENABLE OFF/FALSE) adds empty run benchmark target
 macro(add_run_benchmark_target benchmark_name)
-  cmake_parse_arguments(ARG "true;false" "" "" ${ARGN})
-  if(ARG_false)
-    add_custom_target(run_benchmark_${benchmark_name})
-  else()
+  set(oneValueArgs ENABLE)
+  cmake_parse_arguments(ARG "" "${oneValueArgs}" "" ${ARGN})
+
+  if((NOT DEFINED ARG_ENABLE) OR (ARG_ENABLE))
     add_custom_target(run_benchmark_${benchmark_name} ALL
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         COMMAND ./test/benchmarks/${benchmark_name} --benchmark_out_format=json --benchmark_out="./test/benchmarks/${benchmark_name}_results.json")
+  else()
+    add_custom_target(run_benchmark_${benchmark_name})
   endif()
   add_dependencies(run_benchmark_${benchmark_name} ${benchmark_name})
 endmacro()
