@@ -13,6 +13,13 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
+# This checks if building on windows and if so enables exporting alls symbols.
+# Note: To disable define CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS prior to find_packages(cmake_common_scripts REQUIRED)
+if(WIN32 AND NOT DEFINED CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS)
+  message(VERBOSE "Enabling CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS!")
+  set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+endif()
+
 set(DEFAULT_CPPCHECK_ARGS "--enable=warning,performance,portability,missingInclude;--template=\"[{severity}][{id}] {message} {callstack} \(On {file}:{line}\)\";--suppress=missingIncludeSystem;--quiet;--verbose;--force;--inline-suppr")
 mark_as_advanced(DEFAULT_CPPCHECK_ARGS)
 
