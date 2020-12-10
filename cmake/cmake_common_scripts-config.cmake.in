@@ -4,4 +4,22 @@ set(@PROJECT_NAME@_FOUND ON)
 
 include("${CMAKE_CURRENT_LIST_DIR}/cmake_tools.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/code_coverage.cmake")
-include("${CMAKE_CURRENT_LIST_DIR}/gtest.cmake")
+
+include(CMakeFindDependencyMacro)
+find_dependency(GTest)
+if(NOT TARGET GTest::GTest)
+  find_package(Threads QUIET)
+
+  add_library(GTest::GTest INTERFACE IMPORTED)
+  set_target_properties(GTest::GTest PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${GTEST_INCLUDE_DIRS}")
+  if(TARGET Threads::Threads)
+      set_target_properties(GTest::GTest PROPERTIES INTERFACE_LINK_LIBRARIES "${GTEST_LIBRARIES};Threads::Threads")
+  else()
+    set_target_properties(GTest::GTest PROPERTIES INTERFACE_LINK_LIBRARIES "${GTEST_LIBRARIES}")
+  endif()
+endif()
+
+if(NOT TARGET GTest::Main)
+  add_library(GTest::Main INTERFACE IMPORTED)
+  set_target_properties(GTest::Main PROPERTIES INTERFACE_LINK_LIBRARIES "${GTEST_MAIN_LIBRARIES};GTest::GTest")
+endif()
