@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 3.5.0)
+
 find_package(GTest QUIET)
 if ( NOT GTest_FOUND )
 
@@ -14,8 +16,8 @@ if ( NOT GTest_FOUND )
     ExternalProject_Add(GTest
       GIT_REPOSITORY        https://github.com/google/googletest.git
       GIT_TAG               release-1.8.1
-      SOURCE_DIR            ${CMAKE_BINARY_DIR}/../googletest-src
-      BINARY_DIR            ${CMAKE_BINARY_DIR}/../googletest-build
+      SOURCE_DIR            ${CMAKE_BINARY_DIR}/../cmake_common_scripts-googletest-src
+      BINARY_DIR            ${CMAKE_BINARY_DIR}/../cmake_common_scripts-googletest-build
       UPDATE_DISCONNECTED   ${UPDATE_DISCONNECTED}
       CMAKE_CACHE_ARGS
               -DCMAKE_INSTALL_PREFIX:STRING=${CMAKE_INSTALL_PREFIX}
@@ -35,8 +37,8 @@ if ( NOT GTest_FOUND )
     ExternalProject_Add(GTest
       GIT_REPOSITORY        https://github.com/google/googletest.git
       GIT_TAG               release-1.8.1
-      SOURCE_DIR            ${CMAKE_BINARY_DIR}/../googletest-src
-      BINARY_DIR            ${CMAKE_BINARY_DIR}/../googletest-build
+      SOURCE_DIR            ${CMAKE_BINARY_DIR}/../cmake_common_scripts-googletest-src
+      BINARY_DIR            ${CMAKE_BINARY_DIR}/../cmake_common_scripts-googletest-build
       UPDATE_DISCONNECTED   ${UPDATE_DISCONNECTED}
       CMAKE_CACHE_ARGS
               -DCMAKE_INSTALL_PREFIX:STRING=${CMAKE_INSTALL_PREFIX}
@@ -50,6 +52,10 @@ if ( NOT GTest_FOUND )
     set(GTEST_LIBRARIES ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}/bin/libgtest.dll)
     set(GTEST_MAIN_LIBRARIES ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}/bin/libgtest_main.dll)
   endif()
+
+  install(FILES package.xml DESTINATION share/gtest)
+else()
+  install(FILES package.xml DESTINATION share/dummy RENAME gtest.xml)
 endif()
 
 if(NOT TARGET GTest::GTest)
