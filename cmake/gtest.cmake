@@ -1,4 +1,4 @@
-find_package(GTest QUIET)
+find_package(GTest QUIET NAMES GTest Gtest)
 if ( NOT GTest_FOUND )
 
   include(ExternalProject)
