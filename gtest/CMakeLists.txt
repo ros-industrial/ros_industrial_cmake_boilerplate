@@ -9,49 +9,38 @@ if ( NOT GTest_FOUND )
     set(UPDATE_DISCONNECTED ON)
   endif()
 
+  file(MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}/include)
+  set(GTEST_INCLUDE_DIRS ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}/include)
+
   if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     set(GTEST_CXX_FLAGS "-w -std=c++14")
     set(GTEST_C_FLAGS "-w")
 
-    ExternalProject_Add(GTest
-      GIT_REPOSITORY        https://github.com/google/googletest.git
-      GIT_TAG               release-1.8.1
-      SOURCE_DIR            ${CMAKE_BINARY_DIR}/../cmake_common_scripts-googletest-src
-      BINARY_DIR            ${CMAKE_BINARY_DIR}/../cmake_common_scripts-googletest-build
-      UPDATE_DISCONNECTED   ${UPDATE_DISCONNECTED}
-      CMAKE_CACHE_ARGS
-              -DCMAKE_INSTALL_PREFIX:STRING=${CMAKE_INSTALL_PREFIX}
-              -DCMAKE_BUILD_TYPE:STRING=Release
-              -DCMAKE_CXX_FLAGS:STRING=${GTEST_CXX_FLAGS}
-              -DCMAKE_C_FLAGS:STRING=${GTEST_C_FLAGS}
-              -DBUILD_GMOCK:BOOL=OFF
-              -DBUILD_GTEST:BOOL=ON
-              -DBUILD_SHARED_LIBS:BOOL=ON
-    )
-    file(MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}/include)
-    set(GTEST_INCLUDE_DIRS ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}/include)
     set(GTEST_LIBRARIES ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}/lib/libgtest.so)
     set(GTEST_MAIN_LIBRARIES ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}/lib/libgtest_main.so)
-
   elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    ExternalProject_Add(GTest
-      GIT_REPOSITORY        https://github.com/google/googletest.git
-      GIT_TAG               release-1.8.1
-      SOURCE_DIR            ${CMAKE_BINARY_DIR}/../cmake_common_scripts-googletest-src
-      BINARY_DIR            ${CMAKE_BINARY_DIR}/../cmake_common_scripts-googletest-build
-      UPDATE_DISCONNECTED   ${UPDATE_DISCONNECTED}
-      CMAKE_CACHE_ARGS
-              -DCMAKE_INSTALL_PREFIX:STRING=${CMAKE_INSTALL_PREFIX}
-              -DCMAKE_BUILD_TYPE:STRING=Release
-              -DBUILD_GMOCK:BOOL=OFF
-              -DBUILD_GTEST:BOOL=ON
-              -DBUILD_SHARED_LIBS:BOOL=ON
-    )
-    file(MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}/include)
-    set(GTEST_INCLUDE_DIRS ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}/include)
+    set(GTEST_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+    set(GTEST_C_FLAGS "${CMAKE_C_FLAGS}")
+
     set(GTEST_LIBRARIES ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}/bin/libgtest.dll)
     set(GTEST_MAIN_LIBRARIES ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}/bin/libgtest_main.dll)
   endif()
+
+  ExternalProject_Add(GTest
+    GIT_REPOSITORY        https://github.com/google/googletest.git
+    GIT_TAG               release-1.8.1
+    SOURCE_DIR            ${CMAKE_BINARY_DIR}/../cmake_common_scripts-googletest-src
+    BINARY_DIR            ${CMAKE_BINARY_DIR}/../cmake_common_scripts-googletest-build
+    UPDATE_DISCONNECTED   ${UPDATE_DISCONNECTED}
+    CMAKE_CACHE_ARGS
+            -DCMAKE_INSTALL_PREFIX:STRING=${CMAKE_INSTALL_PREFIX}
+            -DCMAKE_BUILD_TYPE:STRING=Release
+            -DCMAKE_CXX_FLAGS:STRING=${GTEST_CXX_FLAGS}
+            -DCMAKE_C_FLAGS:STRING=${GTEST_C_FLAGS}
+            -DBUILD_GMOCK:BOOL=OFF
+            -DBUILD_GTEST:BOOL=ON
+            -DBUILD_SHARED_LIBS:BOOL=ON
+  )
 
   install(FILES package.xml DESTINATION share/gtest)
 else()
