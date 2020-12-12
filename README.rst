@@ -139,6 +139,15 @@ Set the version to 14 and PUBLIC.
 
    target_cxx_version(${PACKAGE_NAME} PUBLIC VERSION 14)
 
+Find GTest (Pure CMake Package)
+---------------------------------------------
+This CMake macro calls ``find_package(GTest REQUIRED)`` and checks for the ``GTest::GTest`` and ``GTest::Main`` targets. If the targets are missing it will create the targets using the CMake variables.
+
+.. code-block:: cmake
+
+   find_gtest()
+
+
 Add Run Tests Target (Pure CMake Package)
 -----------------------------------------
 This CMake macro adds a custom target that will run the tests after they are finished building. You may pass an optional
