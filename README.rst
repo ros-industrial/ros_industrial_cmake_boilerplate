@@ -141,7 +141,7 @@ Set the version to 14 and PUBLIC.
 
 Find GTest (Pure CMake Package)
 ---------------------------------------------
-This CMake macro calls `find_package(GTest REQUIRED)` and checks for the `GTest::GTest` and `GTest::Main` targets. If the targets are missing it will create the targets using the CMake variables.
+This CMake macro calls ``find_package(GTest REQUIRED)`` and checks for the ``GTest::GTest`` and ``GTest::Main`` targets. If the targets are missing it will create the targets using the CMake variables.
 
 .. code-block:: cmake
 
