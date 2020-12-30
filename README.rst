@@ -36,6 +36,11 @@ This configures clang-tidy with default arguments where any violation will produ
 
    target_clang_tidy(${PACKAGE_NAME} ARGUMENTS ${DEFAULT_CLANG_TIDY_ERROR_ARGS})
 
+This configures clang-tidy to use a .clang-tidy file if no arguments are provided
+
+.. code-block:: cmake
+
+   target_clang_tidy(${PACKAGE_NAME})
 
 .. note::
 
