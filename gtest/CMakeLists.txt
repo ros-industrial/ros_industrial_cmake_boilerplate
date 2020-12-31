@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.5.0)
+project(gtest)
 
 find_package(GTest QUIET)
 if ( NOT GTest_FOUND )
