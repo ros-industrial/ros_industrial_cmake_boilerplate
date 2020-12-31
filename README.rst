@@ -10,6 +10,16 @@ This contains a collection of useful CMake macros.
 Available Macros
 ================
 
+Extract Package Metadata
+-------------------------
+
+This CMake macro will extract the package name and version from a package.xml file.
+It will create two cmake variable **${PREFIX_ARG}_extracted_name** and **${PREFIX_ARG}_extracted_version**.
+
+.. code-block:: cmake
+
+   extract_package_metadata(${PREFIX_ARG})
+
 Clang Tidy
 ----------
 
