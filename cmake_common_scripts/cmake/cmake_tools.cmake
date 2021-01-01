@@ -325,7 +325,7 @@ macro(extract_package_metadata prefix)
 endmacro()
 
 # Find relevant programs
-find_program(CLANG_TIDY_EXE NAMES "clang-tidy")
+find_program(CLANG_TIDY_EXE NAMES clang-tidy clang-tidy-10 clang-tidy-9 clang-tidy-8)
 mark_as_advanced(FORCE CLANG_TIDY_EXE)
 if(CLANG_TIDY_EXE)
   message(STATUS "clang-tidy found: ${CLANG_TIDY_EXE}")

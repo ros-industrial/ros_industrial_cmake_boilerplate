@@ -218,6 +218,8 @@ Code Coverage
 -------------
 These CMake macros add code coverage.
 
+.. note:: Must call **initialize_code_coverage()** after project() in the CMakeLists.txt. This is required for all examples below.
+
 From this point, there are two primary methods for adding instrumentation to targets:
 1. A blanket instrumentation by calling `add_code_coverage()`, where all targets in that directory and all subdirectories are automatically instrumented.
 2. Per-target instrumentation by calling `target_code_coverage(<TARGET_NAME>)`, where the target is given and thus only that target is instrumented. This applies to both libraries and executables.
