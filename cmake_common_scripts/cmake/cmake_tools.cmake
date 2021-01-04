@@ -1,5 +1,8 @@
+# The code below is licensed under the following license unless explicted stated
+# like the macro extract_package_metadata which is BSD 3-Clause.
 #
 # Copyright (C) 2018 by George Cave - gcave@stablecoder.ca
+# Copyright (c) 2020, Southwest Research Institute
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -304,7 +307,10 @@ endmacro()
 
 # This extracts package name and version to the following variables
 # ${prefix}_extracted_name and ${prefix}_extracted_version
-# This was taken from https://github.com/ros-industrial/abb_robot_driver, author Jon Tjerngren
+# This was taken from https://github.com/ros-industrial/abb_robot_driver
+# Author: Jon Tjerngren
+# Copyright (c) 2020, ABB Schweiz AG
+# License: BSD 3-Clause
 macro(extract_package_metadata prefix)
   # Read the package manifest.
   file(READ "${CMAKE_CURRENT_SOURCE_DIR}/package.xml" package_xml_str)
