@@ -1,5 +1,5 @@
-#
 # Copyright (C) 2018 by George Cave - gcave@stablecoder.ca
+# Copyright (c) 2020, Southwest Research Institute
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License. You may obtain a copy of
@@ -299,28 +299,6 @@ macro(target_cxx_version target)
     endif()
   else()
     message(FATAL_ERROR "target_cxx_version: Must provide keywork INTERFACE | PRIVATE | PUBLIC")
-  endif()
-endmacro()
-
-# This extracts package name and version to the following variables
-# ${prefix}_extracted_name and ${prefix}_extracted_version
-# This was taken from https://github.com/ros-industrial/abb_robot_driver, author Jon Tjerngren
-macro(extract_package_metadata prefix)
-  # Read the package manifest.
-  file(READ "${CMAKE_CURRENT_SOURCE_DIR}/package.xml" package_xml_str)
-
-  # Extract project name.
-  if(NOT package_xml_str MATCHES "<name>([A-Za-z0-9_]+)</name>")
-    message(FATAL_ERROR "Could not parse project name from package manifest (aborting)")
-  else()
-    set(${prefix}_extracted_name ${CMAKE_MATCH_1})
-  endif()
-
-  # Extract project version.
-  if(NOT package_xml_str MATCHES "<version>([0-9]+.[0-9]+.[0-9]+)</version>")
-    message(FATAL_ERROR "Could not parse project version from package manifest (aborting)")
-  else()
-    set(${prefix}_extracted_version ${CMAKE_MATCH_1})
   endif()
 endmacro()
 
