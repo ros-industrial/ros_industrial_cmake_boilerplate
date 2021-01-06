@@ -2,8 +2,8 @@
 Changelog for package cmake_common_scripts
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.4 (2021-01-05)
+------------------
 * Remove noetic.ignored which should go in the release repository
 
 0.2.3 (2021-01-05)
