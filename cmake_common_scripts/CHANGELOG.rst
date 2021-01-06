@@ -2,7 +2,7 @@
 Changelog for package cmake_common_scripts
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.1 (2021-01-05)
+------------------
 * Initial Release
 * Contributors: Levi Armstrong, Michael Ripperger
