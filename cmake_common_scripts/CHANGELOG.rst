@@ -2,6 +2,10 @@
 Changelog for package cmake_common_scripts
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Remove noetic.ignored which should go in the release repository
+
 0.2.3 (2021-01-05)
 ------------------
 * Add noetic.ignored to exclude gtest package during bloom release
