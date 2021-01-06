@@ -2,8 +2,8 @@
 Changelog for package cmake_common_scripts
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.5 (2021-01-05)
+------------------
 * Bump version
 
 0.2.4 (2021-01-05)
