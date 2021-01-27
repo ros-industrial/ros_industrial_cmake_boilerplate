@@ -1,7 +1,7 @@
-====================
-CMake Common Scripts
-====================
-This contains a collection of useful CMake macros.
+=========================
+CMake Boilerplate Scripts
+=========================
+This contains a collection of boilerplate CMake scripts and marcos.
 
 .. contents:: Table of Contents
    :depth: 3
