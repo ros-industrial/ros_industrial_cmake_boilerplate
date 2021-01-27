@@ -2,8 +2,8 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.6 (2021-01-26)
+------------------
 * Rename package to ros_industrial_cmake_boilerplate
 * Contributors: Levi Armstrong
 
