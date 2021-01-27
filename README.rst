@@ -3,6 +3,8 @@ CMake Boilerplate Scripts
 =========================
 This contains a collection of boilerplate CMake scripts and marcos.
 
+Note: this package is *not* specific to ROS-Industrial and is usable with any package which uses CMake. The prefix was added to facilitate releasing this into different ROS distributions.
+
 .. contents:: Table of Contents
    :depth: 3
 
