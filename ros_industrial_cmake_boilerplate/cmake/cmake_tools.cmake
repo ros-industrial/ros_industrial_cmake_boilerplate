@@ -14,7 +14,7 @@
 # the License.
 
 # This checks if building on windows and if so enables exporting alls symbols.
-# Note: To disable define CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS prior to find_packages(cmake_common_scripts REQUIRED)
+# Note: To disable define CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS prior to find_packages(ros_industrial_cmake_boilerplate REQUIRED)
 if(WIN32 AND NOT DEFINED CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS)
   message(VERBOSE "Enabling CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS!")
   set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)

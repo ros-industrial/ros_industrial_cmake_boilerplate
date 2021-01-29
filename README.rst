@@ -1,6 +1,18 @@
 =========================
 CMake Boilerplate Scripts
 =========================
+
+|license apache 2.0|
+
+.. |license apache 2.0| image:: https://img.shields.io/:license-Apache%202.0-yellowgreen.svg
+   :target: https://opensource.org/licenses/Apache-2.0
+
+|license bsd 3 clause|
+
+.. |license bsd 3 clause| image:: https://img.shields.io/:license-BSD%203--Clause-orange.svg
+   :target: https://opensource.org/licenses/BSD-3-Clause
+
+
 This contains a collection of boilerplate CMake scripts and marcos.
 
 Note: this package is *not* specific to ROS-Industrial and is usable with any package which uses CMake. The prefix was added to facilitate releasing this into different ROS distributions.
