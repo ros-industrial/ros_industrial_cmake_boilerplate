@@ -231,7 +231,7 @@ macro(add_gtest_discover_tests target)
     gtest_add_tests(${target} "" AUTO)
   else()
     include(GoogleTest)
-    gtest_discover_tests(${target})
+    gtest_discover_tests(${target} DISCOVERY_MODE PRE_TEST)
   endif()
 endmacro()
 
