@@ -2,6 +2,13 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Update package.xml to have buildtool_depend on cmake
+* Set gtest discovery mode to PRE_TEST
+* Moved include of GoogleTest into discover gtest macro
+* Contributors: Levi Armstrong, Michael Ripperger
+
 0.2.7 (2021-01-29)
 ------------------
 * Add contributing file
