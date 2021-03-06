@@ -20,6 +20,18 @@ Note: this package is *not* specific to ROS-Industrial and is usable with any pa
 .. contents:: Table of Contents
    :depth: 3
 
+Create Debian Package (Linux) or NuGet Package (Windows)
+========================================================
+
+The following process will generate a Debian or NuGet package leveraging cmake and cpack based on the OS.
+
+The package should be located in the current directory.
+
+``` bash
+cd <workspace directory>
+catkin build -DRICB_PACKAGE=ON
+./src/ros_industrial_cmake_boilerplate/.run-cpack
+```
 
 Available Macros
 ================

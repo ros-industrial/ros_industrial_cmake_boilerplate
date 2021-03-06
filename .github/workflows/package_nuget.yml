@@ -1,0 +1,45 @@
+name: Package-Windows-Build
+
+on:
+  push:
+    tags:
+    - '*'
+
+  # allow manually starting this workflow
+  workflow_dispatch:
+
+jobs:
+  windows_ci:
+    name: Noetic
+    runs-on: windows-latest
+    env:
+      ROS_DISTRO: noetic
+      CPACK_WORKING_DIR: ./../../build_isolated/ros_industrial_cmake_boilerplate/devel
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
+        path: src/ros_industrial_cmake_boilerplate
+    - name: Build
+      shell: cmd
+      run: |
+        choco sources add -n=roswin -s https://aka.ms/ros/public --priority 1
+        choco install ros-%ROS_DISTRO%-desktop_full -y --no-progress
+
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\Tools\VsDevCmd.bat" -arch=amd64 -host_arch=amd64
+        call "C:\opt\ros\%ROS_DISTRO%\x64\setup.bat"
+
+        choco install llvm -y --no-progress
+
+        catkin_make_isolated --cmake-args -DCMAKE_BUILD_TYPE=Release -DRICB_PACKAGE=ON
+
+    - name: NuGet Package
+      shell: bash
+      run: |
+        cd src/ros_industrial_cmake_boilerplate
+        bash .run-cpack
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: nuget_package
+        path: ./src/ros_industrial_cmake_boilerplate/*.nupkg
