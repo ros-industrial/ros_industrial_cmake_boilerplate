@@ -29,8 +29,6 @@ jobs:
       - name: Create artifacts directory
         run: |
           mkdir artifacts
-          pwd
-          ls
 
       - name: Free Disk Space
         run: |
