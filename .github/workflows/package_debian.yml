@@ -45,3 +45,8 @@ jobs:
         with:
           name: debian_package
           path: /home/runner/work/ros_industrial_cmake_boilerplate/ros_industrial_cmake_boilerplate/artifacts/*.deb
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: archive_package
+          path: /home/runner/work/ros_industrial_cmake_boilerplate/ros_industrial_cmake_boilerplate/artifacts/*.tar.xz
