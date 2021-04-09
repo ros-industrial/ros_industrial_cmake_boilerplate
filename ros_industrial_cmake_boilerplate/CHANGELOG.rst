@@ -2,6 +2,15 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add ENABLE functionality to initialize_code_coverage
+* Improve cpack package naming
+* Add cpack archive package
+* Add CPACK to build debian and nuget package
+* Extract description from package.xml
+* Contributors: Levi Armstrong
+
 0.2.8 (2021-02-08)
 ------------------
 * Update package.xml to have buildtool_depend on cmake
