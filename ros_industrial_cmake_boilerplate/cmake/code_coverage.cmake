@@ -91,7 +91,10 @@ set(CMAKE_COVERAGE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/ccov)
 
 # Common initialization/checks
 macro(initialize_code_coverage)
-  if(NOT CODE_COVERAGE_ADDED)
+  set(oneValueArgs ENABLE)
+  cmake_parse_arguments(initialize_code_coverage "" "${oneValueArgs}" "" ${ARGN})
+
+  if(NOT CODE_COVERAGE_ADDED AND ((NOT DEFINED initialize_code_coverage_ENABLE) OR (initialize_code_coverage_ENABLE)))
     set(CODE_COVERAGE_ADDED ON)
 
     # Common Targets
