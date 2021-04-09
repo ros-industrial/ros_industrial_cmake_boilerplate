@@ -2,8 +2,8 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.9 (2021-04-09)
+------------------
 * Add ENABLE functionality to initialize_code_coverage
 * Improve cpack package naming
 * Add cpack archive package
