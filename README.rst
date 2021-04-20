@@ -165,6 +165,49 @@ This CMake macro simplifies the CMake package configure and install by performin
 
    configure_package(NAMESPACE <PACKAGE_NAMESPACE> TARGETS <TARGET_NAME_A> <TARGET_NAME_B>)
 
+Sub macros used in configure package
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The following macros are used by configure_package and can be used independently if needed
+
+Install Targets
+===============
+This will install along with export them to ${PROJECT_NAME}-targets
+
+.. code-block:: cmake
+
+   install_targets(TARGETS targetA targetb)
+
+Install package.xml
+===================
+This will install package.xml file
+
+.. code-block:: cmake
+
+   install_pkgxml()
+
+Generate CMake Config Files
+===========================
+This will generate and install cmake config files
+
+.. code-block:: cmake
+
+   # Install export targets with provided namespace
+   generate_package_config(EXPORT NAMSPACE namespace)
+
+   #Install export targets with no namespace
+   generate_package_config(EXPORT)
+
+   # Install cmake config files and not install export targets
+   generate_package_config() Install cmake config files and not install export targets
+
+Install Ament Hooks
+===================
+Allows Colcon to find non-Ament packages when using workspace underlays
+
+.. code-block:: cmake
+
+   install_ament_hooks()
+
 Set Target CXX VERSION
 ----------------------
 This CMake macro simplifies setting the CXX version for the target

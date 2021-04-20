@@ -132,31 +132,53 @@ macro(cppcheck)
   endif()
 endmacro()
 
-# Performs multiple operation so other packages may find a package
-# Usage: configure_package(NAMSPACE namespace TARGETS targetA targetb)
-#   * It installs the provided targets
-#   * It exports the provided targets under the provided namespace
-#   * It installs the package.xml file
-#   * It create and install the ${PROJECT_NAME}-config.cmake and ${PROJECT_NAME}-config-version.cmake
-macro(configure_package)
-  set(oneValueArgs NAMESPACE)
-  set(multiValueArgs TARGETS)
-  cmake_parse_arguments(ARG "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+# Allows Colcon to find non-Ament packages when using workspace underlays
+macro(install_ament_hooks)
+  # Allows Colcon to find non-Ament packages when using workspace underlays
+  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/share/ament_index/resource_index/packages/${PROJECT_NAME} "")
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/share/ament_index/resource_index/packages/${PROJECT_NAME} DESTINATION share/ament_index/resource_index/packages)
+  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/share/${PROJECT_NAME}/hook/ament_prefix_path.dsv "prepend-non-duplicate;AMENT_PREFIX_PATH;")
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/share/${PROJECT_NAME}/hook/ament_prefix_path.dsv DESTINATION share/${PROJECT_NAME}/hook)
+  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/share/${PROJECT_NAME}/hook/ros_package_path.dsv "prepend-non-duplicate;ROS_PACKAGE_PATH;")
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/share/${PROJECT_NAME}/hook/ros_package_path.dsv DESTINATION share/${PROJECT_NAME}/hook)
+endmacro()
 
-  if (ARG_TARGETS)
-    install(TARGETS ${ARG_TARGETS}
-            EXPORT ${PROJECT_NAME}-targets
-            RUNTIME DESTINATION bin
-            LIBRARY DESTINATION lib
-            ARCHIVE DESTINATION lib)
+# Install the provided targets and export to ${PROJECT_NAME}-targets
+# Usage: install_targets(TARGETS targetA targetb)
+macro(install_targets)
+  set(multiValueArgs TARGETS)
+  cmake_parse_arguments(ARG "" "" "${multiValueArgs}" ${ARGN})
+  install(TARGETS ${ARG_TARGETS}
+          EXPORT ${PROJECT_NAME}-targets
+          RUNTIME DESTINATION bin
+          LIBRARY DESTINATION lib
+          ARCHIVE DESTINATION lib)
+endmacro()
+
+# Install the package.xml used for catkin and ament
+macro(install_pkgxml)
+  install(FILES package.xml DESTINATION share/${PROJECT_NAME})
+endmacro()
+
+# Performs multiple operation so other packages may find a package
+# Usage:
+#   * generate_package_config(EXPORT NAMSPACE namespace) Install export targets with provided namespace
+#   * generate_package_config(EXPORT) Install export targets with no namespace
+#   * generate_package_config() Install cmake config files and not install export targets
+#   * It exports the provided targets under the provided namespace if EXPORT option is set
+#   * It create and install the ${PROJECT_NAME}-config.cmake and ${PROJECT_NAME}-config-version.cmake
+macro(generate_package_config)
+  set(options EXPORT)
+  set(oneValueArgs NAMESPACE)
+  cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "" ${ARGN})
+
+  if (ARG_EXPORT)
     if (ARG_NAMESPACE)
       install(EXPORT ${PROJECT_NAME}-targets NAMESPACE "${ARG_NAMESPACE}::" DESTINATION lib/cmake/${PROJECT_NAME})
     else()
       install(EXPORT ${PROJECT_NAME}-targets DESTINATION lib/cmake/${PROJECT_NAME})
     endif()
   endif()
-
-  install(FILES package.xml DESTINATION share/${PROJECT_NAME})
 
   # Create cmake config files
   include(CMakePackageConfigHelpers)
@@ -173,22 +195,38 @@ macro(configure_package)
     "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
     DESTINATION lib/cmake/${PROJECT_NAME})
 
-  if (ARG_TARGETS)
+  if (ARG_EXPORT)
     if (ARG_NAMESPACE)
       export(EXPORT ${PROJECT_NAME}-targets NAMESPACE "${ARG_NAMESPACE}::" FILE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-targets.cmake)
     else()
       export(EXPORT ${PROJECT_NAME}-targets FILE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-targets.cmake)
     endif()
   endif()
+endmacro()
 
-  # Allows Colcon to find non-Ament packages when using workspace underlays
-  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/share/ament_index/resource_index/packages/${PROJECT_NAME} "")
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/share/ament_index/resource_index/packages/${PROJECT_NAME} DESTINATION share/ament_index/resource_index/packages)
-  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/share/${PROJECT_NAME}/hook/ament_prefix_path.dsv "prepend-non-duplicate;AMENT_PREFIX_PATH;")
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/share/${PROJECT_NAME}/hook/ament_prefix_path.dsv DESTINATION share/${PROJECT_NAME}/hook)
-  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/share/${PROJECT_NAME}/hook/ros_package_path.dsv "prepend-non-duplicate;ROS_PACKAGE_PATH;")
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/share/${PROJECT_NAME}/hook/ros_package_path.dsv DESTINATION share/${PROJECT_NAME}/hook)
+# Performs multiple operation so other packages may find a package
+# Usage: configure_package(NAMSPACE namespace TARGETS targetA targetb)
+#   * It installs the provided targets
+#   * It exports the provided targets under the provided namespace
+#   * It installs the package.xml file
+#   * It create and install the ${PROJECT_NAME}-config.cmake and ${PROJECT_NAME}-config-version.cmake
+macro(configure_package)
+  set(oneValueArgs NAMESPACE)
+  set(multiValueArgs TARGETS)
+  cmake_parse_arguments(ARG "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
+  # install package.xml
+  install_pkgxml()
+
+  # install and export targets if provided and generate package config
+  if (ARG_TARGETS)
+    install_targets(TARGETS ${ARG_TARGETS})
+    generate_package_config(EXPORT NAMESPACE ${ARG_NAMESPACE})
+  else()
+    generate_package_config(NAMESPACE ${ARG_NAMESPACE})
+  endif()
+
+  install_ament_hooks()
 endmacro()
 
 # This macro call find_package(GTest REQUIRED) and check for targets GTest::GTest and GTest::Main and if missign it will create them
