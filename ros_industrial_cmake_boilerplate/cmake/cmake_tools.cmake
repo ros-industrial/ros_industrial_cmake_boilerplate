@@ -336,7 +336,7 @@ macro(target_cxx_version target)
       target_compile_features("${target}" PRIVATE cxx_std_${ARG_VERSION})
     endif()
   else()
-    message(FATAL_ERROR "target_cxx_version: Must provide keywork INTERFACE | PRIVATE | PUBLIC")
+    message(FATAL_ERROR "target_cxx_version: Must provide keyword INTERFACE | PRIVATE | PUBLIC")
   endif()
 endmacro()
 
