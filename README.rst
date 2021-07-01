@@ -1,8 +1,6 @@
-.. highlight:: rst
-
-=========================
+#########################
 CMake Boilerplate Scripts
-=========================
+#########################
 
 |license apache 2.0|
 
@@ -20,12 +18,13 @@ This contains a collection of boilerplate CMake scripts and marcos.
 Note: this package is *not* specific to ROS-Industrial and is usable with any package which uses CMake. The prefix was added to facilitate releasing this into different ROS distributions.
 
 .. contents:: Table of Contents
-   :depth: 3
+   :depth: 4
 
+********************************************************
 Create Debian Package (Linux) or NuGet Package (Windows)
-========================================================
+********************************************************
 
-The following process will generate a Debian or NuGet package leveraging cmake and cpack based on the OS.
+The following process will generate a Debian or NuGet package leveraging CMake and CPack based on the OS.
 
 The package should be located in the current directory.
 
@@ -35,11 +34,12 @@ catkin build -DRICB_PACKAGE=ON
 ./src/ros_industrial_cmake_boilerplate/.run-cpack
 ```
 
+****************
 Available Macros
-================
+****************
 
 Extract Package Metadata
--------------------------
+========================
 
 This CMake macro will extract the package name and version from a package.xml file.
 It will create two cmake variable **${PREFIX_ARG}_extracted_name** and **${PREFIX_ARG}_extracted_version**.
@@ -49,14 +49,14 @@ It will create two cmake variable **${PREFIX_ARG}_extracted_name** and **${PREFI
    extract_package_metadata(${PREFIX_ARG})
 
 Clang Tidy
-----------
+==========
 
-This CMake macro will add clang tidy to a provided target.
+This CMake macro will add clang-tidy to a provided target.
 
 - `The clang-tidy documentation <https://clang.llvm.org/extra/clang-tidy/>`_
 - `The list of clang-tidy checks <https://clang.llvm.org/extra/clang-tidy/checks/list.html>`_
 
-.. note:: Each of the macros can take an ENABLE ON/OFF so they can easly be enable by external flag. If not provided it is automatically enabled.
+.. note:: Each of the macros can take an ENABLE ON/OFF so they can easily be enabled by an external flag. If not provided it is automatically enabled.
 
 .. code-block:: cmake
 
@@ -82,10 +82,10 @@ This configures clang-tidy to use a .clang-tidy file if no arguments are provide
 
 .. note::
 
-   In some situation you may want to disable clang-tidy which is explained `here <https://clang.llvm.org/extra/clang-tidy/#id3>`_.
+   In some situation, you may want to disable clang-tidy which is explained `here <https://clang.llvm.org/extra/clang-tidy/#id3>`_.
 
 Include What You Use (IWYU)
----------------------------
+===========================
 This CMake macro will add IWYU to a given target
 
 - `Why Include What You Use? <https://github.com/include-what-you-use/include-what-you-use/blob/master/docs/WhyIWYU.md>`_
@@ -93,7 +93,7 @@ This CMake macro will add IWYU to a given target
 - `Exclude headers from check <https://github.com/include-what-you-use/include-what-you-use/blob/master/docs/IWYUPragmas.md>`_
 - `Avoid Common Issues <https://www.incredibuild.com/blog/include-what-you-use-how-to-best-utilize-this-tool-and-avoid-common-issues/>`_
 
-.. note:: Each of the macros can take an ENABLE ON/OFF so they can easly be enable by external flag. If not provided it is automatically enabled.
+.. note:: Each of the macros can take an ENABLE ON/OFF so they can easily be enabled by an external flag. If not provided it is automatically enabled.
 
 .. code-block:: cmake
 
@@ -120,13 +120,13 @@ This CMake macro will add IWYU to all targets with default arguments.
 
 
 CppCheck
---------
+========
 
 This CMake macro will add CppCheck to a given target
 
 - `CppCheck Wiki <https://sourceforge.net/p/cppcheck/wiki/Home/>`_
 
-.. note:: Each of the macros can take an ENABLE ON/OFF so they can easly be enable by external flag. If not provided it is automatically enabled.
+.. note:: Each of the macros can take an ENABLE ON/OFF so they can easily be enabled by the external flag. If not provided it is automatically enabled.
 
 .. code-block:: cmake
 
@@ -155,7 +155,7 @@ This CMake macro will add CppCheck to all targets with default arguments.
 
 
 Configure (Pure CMake Package)
-------------------------------
+==============================
 This CMake macro simplifies the CMake package configure and install by performing multiple operations
 
 * It installs the provided targets
@@ -167,12 +167,12 @@ This CMake macro simplifies the CMake package configure and install by performin
 
    configure_package(NAMESPACE <PACKAGE_NAMESPACE> TARGETS <TARGET_NAME_A> <TARGET_NAME_B>)
 
-Sub macros used in configure package
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Sub macros used in configure the package
+----------------------------------------
 The following macros are used by configure_package and can be used independently if needed
 
 Install Targets
-===============
+^^^^^^^^^^^^^^^
 This will install along with export them to ${PROJECT_NAME}-targets
 
 .. code-block:: cmake
@@ -180,16 +180,16 @@ This will install along with export them to ${PROJECT_NAME}-targets
    install_targets(TARGETS targetA targetb)
 
 Install package.xml
-===================
-This will install package.xml file
+^^^^^^^^^^^^^^^^^^^
+This will install the package.xml file
 
 .. code-block:: cmake
 
    install_pkgxml()
 
 Generate CMake Config Files
-===========================
-This will generate and install cmake config files
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+This will generate and install CMake config files
 
 .. code-block:: cmake
 
@@ -199,11 +199,11 @@ This will generate and install cmake config files
    #Install export targets with no namespace
    generate_package_config(EXPORT)
 
-   # Install cmake config files and not install export targets
-   generate_package_config() Install cmake config files and not install export targets
+   # Install CMake config files and not install export targets
+   generate_package_config() Install CMake config files and not install export targets
 
 Install Ament Hooks
-===================
+^^^^^^^^^^^^^^^^^^^
 Allows Colcon to find non-Ament packages when using workspace underlays
 
 .. code-block:: cmake
@@ -211,7 +211,7 @@ Allows Colcon to find non-Ament packages when using workspace underlays
    install_ament_hooks()
 
 Set Target CXX VERSION
-----------------------
+======================
 This CMake macro simplifies setting the CXX version for the target
 
 .. code-block:: cmake
@@ -226,7 +226,7 @@ Set the version to 14 and PUBLIC.
    target_cxx_version(${PACKAGE_NAME} PUBLIC VERSION 14)
 
 Find GTest (Pure CMake Package)
----------------------------------------------
+===============================
 This CMake macro calls ``find_package(GTest REQUIRED)`` and checks for the ``GTest::GTest`` and ``GTest::Main`` targets. If the targets are missing it will create the targets using the CMake variables.
 
 .. code-block:: cmake
@@ -235,9 +235,9 @@ This CMake macro calls ``find_package(GTest REQUIRED)`` and checks for the ``GTe
 
 
 Add Run Tests Target (Pure CMake Package)
------------------------------------------
+=========================================
 This CMake macro adds a custom target that will run the tests after they are finished building. You may pass an optional
-argument true|false adding the ability do disable the running of tests as part of the build for CI which calls make test.
+argument true|false adding the ability to disable the running of tests as part of the build for CI which calls make test.
 
 Add run test target (These will automatically run the test after build finishes)
 
@@ -257,15 +257,15 @@ Add empty run test target
 
 
 Add GTest Discover Tests (Pure CMake Package)
----------------------------------------------
-This CMake macro call the appropriate gtest function to add a test based on the CMake version
+=============================================
+This CMake macro call the appropriate GTest function to add a test based on the CMake version
 
 .. code-block:: cmake
 
    add_gtest_discover_tests(<TARGET_NAME>)
 
 Add Run Benchmark Target
-------------------------
+========================
 This CMake macro adds a custom target that will run the benchmarks after they are finished building.
 
 Add run benchmark target (These will automatically run the benchmark after build finishes)
@@ -286,7 +286,7 @@ Add empty run benchmark target
 
 
 Code Coverage
--------------
+=============
 These CMake macros add code coverage.
 
 .. note:: Must call **initialize_code_coverage()** after project() in the CMakeLists.txt. This is required for all examples below.
@@ -297,16 +297,16 @@ From this point, there are two primary methods for adding instrumentation to tar
 
 To add coverage targets, such as calling `make ccov` to generate the actual coverage information for perusal or consumption, call `target_code_coverage(<TARGET_NAME>)` on an *executable* target.
 
-.. note:: Each of the macros can take an ENABLE ON/OFF so they can easly be enable by external flag. If not provided it is automatically enabled.
+.. note:: Each of the macros can take an ENABLE ON/OFF so they can easily be enabled by an external flag. If not provided it is automatically enabled.
 
-Examples
-++++++++
 
 Example 1: All targets instrumented
+-----------------------------------
 
-In this case, the coverage information reported will will be that of the `theLib` library target and `theExe` executable.
+In this case, the coverage information reported will be that of the `theLib` library target and `theExe` executable.
 
 1a: Via global command
+^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cmake
 
@@ -317,6 +317,7 @@ In this case, the coverage information reported will will be that of the `theLib
    target_code_coverage(theExe) # As an executable target, adds the 'ccov-theExe' target (instrumentation already added via global anyways) for generating code coverage reports.
 
 1b: Via target commands
+^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cmake
 
@@ -326,7 +327,8 @@ In this case, the coverage information reported will will be that of the `theLib
    target_link_libraries(theExe PRIVATE theLib)
    target_code_coverage(theExe) # As an executable target, adds the 'ccov-theExe' target and instrumentation for generating code coverage reports.
 
-Example 2: Target instrumented, but with regex pattern of files to be excluded from report
+Example 2: Target instrumented, but with regex pattern of files to be excluded from the report
+----------------------------------------------------------------------------------------------
 
 .. code-block:: cmake
 
@@ -334,6 +336,7 @@ Example 2: Target instrumented, but with regex pattern of files to be excluded f
    target_code_coverage(theExe EXCLUDE non_covered.cpp test/*) # As an executable target, the reports will exclude the non-covered.cpp file, and any files in a test/ folder.
 
 Example 3: Target added to the 'ccov' and 'ccov-all' targets
+------------------------------------------------------------
 
 .. code-block:: cmake
 
