@@ -58,6 +58,20 @@ This CMake macro will add clang-tidy to a provided target.
 
 .. note:: Each of the macros can take an ENABLE ON/OFF so they can easily be enabled by an external flag. If not provided it is automatically enabled.
 
+Single Argument Keywords:
+
+- ENABLE (ON/OFF): Enable/Disable clang tidy
+- WARNINGS_AS_ERRORS (ON/OFF): Treat warnings as errors. If ERROR_CHECKS is not provide it will use CHECKS to treat as errors.
+- HEADER_FILTER (String, Default to ".*" if not provided): Regular expression matching the names of the headers to output diagnostics from.
+- LINE_FILTER (String): List of files with line ranges to filter the warnings.
+- CHECKS (String): Comma-separated list of globs with optional '-' prefix. Globs are processed in order of appearance in the list. Globs without '-' prefix add checks with matching names to the set, globs with the '-' prefix remove checks with matching names from the set of enabled checks. This option's value is appended to the value of the 'Checks' option in .clang-tidy file, if any.
+- CONFIG (String of YAML/JSON format): If not provided, clang-tidy will attempt to find a file named .clang-tidy for each source file in its parent directories.
+- ERRORS_CHECKS (String): Upgrades warnings to errors. Same format as 'CHECKS'. This option's value is appended to the value of the 'WarningsAsErrors' option in .clang-tidy file, if any.
+
+Multip Value Argument Keywords:
+
+- ARGUMENTS (String): This supports adding additional arguments to be passed to the clang-tidy. You could just use this if desired over the single keywords except for the ENABLE to pass all arguments to clang-tidy if desired.
+
 .. code-block:: cmake
 
    target_clang_tidy(${PACKAGE_NAME} ARGUMENTS ${ARGN})
@@ -66,13 +80,37 @@ This configures clang-tidy with default arguments where any violation will produ
 
 .. code-block:: cmake
 
-   target_clang_tidy(${PACKAGE_NAME} ARGUMENTS ${DEFAULT_CLANG_TIDY_WARNING_ARGS})
+   target_clang_tidy(${PACKAGE_NAME} CHECKS ${DEFAULT_CLANG_TIDY_CHECKS})
 
 This configures clang-tidy with default arguments where any violation will produce compiler errors.
 
 .. code-block:: cmake
 
-   target_clang_tidy(${PACKAGE_NAME} ARGUMENTS ${DEFAULT_CLANG_TIDY_ERROR_ARGS})
+   target_clang_tidy(${PACKAGE_NAME} CHECKS ${DEFAULT_CLANG_TIDY_CHECKS} WARNINGS_AS_ERRORS ON)
+
+This configures clang-tidy with custom error checks which can be different from the warning checks where any violation will produce compiler errors.
+
+.. code-block:: cmake
+
+   target_clang_tidy(${PACKAGE_NAME} CHECKS ${DEFAULT_CLANG_TIDY_CHECKS} ERROR_CHECKS ${DEFAULT_CLANG_TIDY_CHECKS})
+
+This configures clang-tidy with header filter. If not provided it will default to ".*".
+
+.. code-block:: cmake
+
+   target_clang_tidy(${PACKAGE_NAME} HEADER_FILTER ".*")
+
+This configures clang-tidy with line filter as a JSON array of objects.
+
+.. code-block:: cmake
+
+   target_clang_tidy(${PACKAGE_NAME} LINE_FILTER "[{"name":"file1.cpp","lines":[[1,3],[5,7]]},{"name":"file2.h"}]")
+
+This configures clang-tidy with config in YAML/JSON format.
+
+.. code-block:: cmake
+
+   target_clang_tidy(${PACKAGE_NAME} CONFIG ""{Checks: '*', CheckOptions: [{key: x, value: y}]}")
 
 This configures clang-tidy to use a .clang-tidy file if no arguments are provided
 

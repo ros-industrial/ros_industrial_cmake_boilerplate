@@ -26,16 +26,53 @@ mark_as_advanced(DEFAULT_CPPCHECK_ARGS)
 set(DEFAULT_IWYU_ARGS "-Xiwyu;any;-Xiwyu;iwyu;-Xiwyu;args")
 mark_as_advanced(DEFAULT_IWYU_ARGS)
 
-set(DEFAULT_CLANG_TIDY_WARNING_ARGS "-header-filter=.*" "-checks=-*,bugprone-*,cppcoreguidelines-avoid-goto,cppcoreguidelines-c-copy-assignment-signature,cppcoreguidelines-interfaces-global-init,cppcoreguidelines-narrowing-conversions,cppcoreguidelines-no-malloc,cppcoreguidelines-slicing,cppcoreguidelines-special-member-functions,misc-*,modernize-*,performance-*,readability-avoid-const-params-in-decls,readability-container-size-empty,readability-delete-null-pointer,readability-deleted-default,readability-else-after-return,readability-function-size,readability-identifier-naming,readability-inconsistent-declaration-parameter-name,readability-misleading-indentation,readability-misplaced-array-index,readability-non-const-parameter,readability-redundant-*,readability-simplify-*,readability-static-*,readability-string-compare,readability-uniqueptr-delete-release,readability-rary-objects")
-mark_as_advanced(DEFAULT_CLANG_TIDY_WARNING_ARGS )
+set(DEFAULT_CLANG_TIDY_CHECKS
+  "-*, \
+  bugprone-*, \
+  cppcoreguidelines-avoid-goto, \
+  cppcoreguidelines-c-copy-assignment-signature, \
+  cppcoreguidelines-interfaces-global-init, \
+  cppcoreguidelines-narrowing-conversions, \
+  cppcoreguidelines-no-malloc, \
+  cppcoreguidelines-slicing, \
+  cppcoreguidelines-special-member-functions, \
+  misc-*, \
+  -misc-non-private-member-variables-in-classes, \
+  modernize-*, \
+  -modernize-use-trailing-return-type, \
+  -modernize-use-nodiscard, \
+  performance-*, \
+  readability-avoid-const-params-in-decls, \
+  readability-container-size-empty, \
+  readability-delete-null-pointer, \
+  readability-deleted-default, \
+  readability-else-after-return, \
+  readability-function-size, \
+  readability-identifier-naming, \
+  readability-inconsistent-declaration-parameter-name, \
+  readability-misleading-indentation, \
+  readability-misplaced-array-index, \
+  readability-non-const-parameter, \
+  readability-redundant-*, \
+  readability-simplify-*, \
+  readability-static-*, \
+  readability-string-compare, \
+  readability-uniqueptr-delete-release, \
+  readability-rary-objects")
+mark_as_advanced(DEFAULT_CLANG_TIDY_CHECKS)
 
-set(DEFAULT_CLANG_TIDY_ERROR_ARGS "-header-filter=.*" "-checks=-*,bugprone-*,cppcoreguidelines-avoid-goto,cppcoreguidelines-c-copy-assignment-signature,cppcoreguidelines-interfaces-global-init,cppcoreguidelines-narrowing-conversions,cppcoreguidelines-no-malloc,cppcoreguidelines-slicing,cppcoreguidelines-special-member-functions,misc-*,modernize-*,performance-*,readability-avoid-const-params-in-decls,readability-container-size-empty,readability-delete-null-pointer,readability-deleted-default,readability-else-after-return,readability-function-size,readability-identifier-naming,readability-inconsistent-declaration-parameter-name,readability-misleading-indentation,readability-misplaced-array-index,readability-non-const-parameter,readability-redundant-*,readability-simplify-*,readability-static-*,readability-string-compare,readability-uniqueptr-delete-release,readability-rary-objects" "-warnings-as-errors=-*,bugprone-*,cppcoreguidelines-avoid-goto,cppcoreguidelines-c-copy-assignment-signature,cppcoreguidelines-interfaces-global-init,cppcoreguidelines-narrowing-conversions,cppcoreguidelines-no-malloc,cppcoreguidelines-slicing,cppcoreguidelines-special-member-functions,misc-*,modernize-*,performance-*,readability-avoid-const-params-in-decls,readability-container-size-empty,readability-delete-null-pointer,readability-deleted-default,readability-else-after-return,readability-function-size,readability-identifier-naming,readability-inconsistent-declaration-parameter-name,readability-misleading-indentation,readability-misplaced-array-index,readability-non-const-parameter,readability-redundant-*,readability-simplify-*,readability-static-*,readability-string-compare,readability-uniqueptr-delete-release,readability-rary-objects")
+set(DEFAULT_CLANG_TIDY_WARNING_ARGS "-checks=${DEFAULT_CLANG_TIDY_CHECKS}")
+message(DEPRECATED " CMake variable DEFAULT_CLANG_TIDY_WARNING_ARGS will be removed please use DEFAULT_CLANG_TIDY_CHECKS")
+mark_as_advanced(DEFAULT_CLANG_TIDY_WARNING_ARGS)
+
+set(DEFAULT_CLANG_TIDY_ERROR_ARGS "-checks=${DEFAULT_CLANG_TIDY_CHECKS}" "-warnings-as-errors=${DEFAULT_CLANG_TIDY_CHECKS}")
+message(DEPRECATED " CMake variable DEFAULT_CLANG_TIDY_ERROR_ARGS will be removed please use DEFAULT_CLANG_TIDY_CHECKS")
 mark_as_advanced(DEFAULT_CLANG_TIDY_ERROR_ARGS)
 
 # Adds clang-tidy checks to the target, with the given arguments being used
 # as the options set.
 macro(target_clang_tidy target)
-  set(oneValueArgs ENABLE)
+  set(oneValueArgs ENABLE WARNINGS_AS_ERRORS HEADER_FILTER LINE_FILTER CHECKS CONFIG ERRORS_CHECKS)
   set(multiValueArgs ARGUMENTS)
   cmake_parse_arguments(ARG "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -43,6 +80,36 @@ macro(target_clang_tidy target)
     if(CLANG_TIDY_EXE)
       get_target_property(${target}_type ${target} TYPE)
       if(NOT ${${target}_type} STREQUAL "INTERFACE_LIBRARY")
+        set(CLANG_TIDY_ARGUMENTS_FULL "")
+
+        if(ARG_HEADER_FILTER)
+          list(APPEND CLANG_TIDY_ARGUMENTS_FULL "--header-filter=${ARG_HEADER_FILTER}")
+        else()
+          list(APPEND CLANG_TIDY_ARGUMENTS_FULL "--header-filter=.*")
+        endif()
+
+        if(ARG_LINE_FILTER)
+          list(APPEND CLANG_TIDY_ARGUMENTS_FULL "-line-filter=${ARG_LINE_FILTER}")
+        endif()
+
+        if(ARG_CHECKS)
+          list(APPEND CLANG_TIDY_ARGUMENTS_FULL "--checks=${ARG_CHECKS}")
+        endif()
+
+        if(ARG_ERRORS_CHECKS)
+          list(APPEND CLANG_TIDY_ARGUMENTS_FULL "--warnings-as-errors=${ARG_ERRORS_CHECKS}")
+        elseif((ARG_WARNINGS_AS_ERRORS) AND (ARG_CHECKS))
+          list(APPEND CLANG_TIDY_ARGUMENTS_FULL "--warnings-as-errors=${ARG_CHECKS}")
+        endif()
+
+        if(ARG_CONFIG)
+          list(APPEND CLANG_TIDY_ARGUMENTS_FULL "--config=${ARG_CONFIG}")
+        endif()
+
+        if(ARG_ARGUMENTS)
+          list(APPEND CLANG_TIDY_ARGUMENTS_FULL "${ARG_ARGUMENTS}")
+        endif()
+
         if(ARG_ARGUMENTS)
           set_target_properties("${target}" PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_EXE};${ARG_ARGUMENTS}")
         else()
