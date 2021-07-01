@@ -1,3 +1,5 @@
+.. highlight:: rst
+
 =========================
 CMake Boilerplate Scripts
 =========================
