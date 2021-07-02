@@ -69,7 +69,7 @@ HEADER_FILTER       String  Default to '.*' if not provided. Regular expression 
 LINE_FILTER         String  List of files with line ranges to filter the warnings.
 CHECKS              String  Comma-separated list of globs with optional '-' prefix. Globs are processed in order of appearance in the list. Globs without the '-' prefix add checks with matching names to the set, globs with the '-' prefix remove checks with matching names from the set of enabled checks. This option's value is appended to the value of the 'Checks' option in the .clang-tidy file, if any.
 CONFIG              String  YAML/JSON format. If not provided, clang-tidy will attempt to find a file named .clang-tidy for each source file in its parent directories.
-ERRORS_CHECKS       String  Upgrades warnings to errors. Same format as 'CHECKS'. This option's value is appended to the value of the 'WarningsAsErrors' option in the .clang-tidy file, if any.
+ERROR_CHECKS        String  Upgrades warnings to errors. Same format as 'CHECKS'. This option's value is appended to the value of the 'WarningsAsErrors' option in the .clang-tidy file, if any.
 ================== ======== ===========
 
 Multip Value Argument Keywords:
