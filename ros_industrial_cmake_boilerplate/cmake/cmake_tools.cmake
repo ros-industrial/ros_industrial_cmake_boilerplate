@@ -72,7 +72,7 @@ mark_as_advanced(DEFAULT_CLANG_TIDY_ERROR_ARGS)
 # Adds clang-tidy checks to the target, with the given arguments being used
 # as the options set.
 macro(target_clang_tidy target)
-  set(oneValueArgs ENABLE WARNINGS_AS_ERRORS HEADER_FILTER LINE_FILTER CHECKS CONFIG ERRORS_CHECKS)
+  set(oneValueArgs ENABLE WARNINGS_AS_ERRORS HEADER_FILTER LINE_FILTER CHECKS CONFIG ERROR_CHECKS)
   set(multiValueArgs ARGUMENTS)
   cmake_parse_arguments(ARG "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -96,8 +96,8 @@ macro(target_clang_tidy target)
           list(APPEND CLANG_TIDY_ARGUMENTS_FULL "--checks=${ARG_CHECKS}")
         endif()
 
-        if(ARG_ERRORS_CHECKS)
-          list(APPEND CLANG_TIDY_ARGUMENTS_FULL "--warnings-as-errors=${ARG_ERRORS_CHECKS}")
+        if(ARG_ERROR_CHECKS)
+          list(APPEND CLANG_TIDY_ARGUMENTS_FULL "--warnings-as-errors=${ARG_ERROR_CHECKS}")
         elseif((ARG_WARNINGS_AS_ERRORS) AND (ARG_CHECKS))
           list(APPEND CLANG_TIDY_ARGUMENTS_FULL "--warnings-as-errors=${ARG_CHECKS}")
         endif()
