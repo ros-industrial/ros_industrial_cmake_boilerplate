@@ -2,6 +2,11 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Rename clang-tidy keyword ERRORS_CHECKS to ERROR_CHECKS
+* Contributors: Levi Armstrong
+
 0.2.10 (2021-07-02)
 -------------------
 * Improve target_clang_tidy to support individual options over single argument list
