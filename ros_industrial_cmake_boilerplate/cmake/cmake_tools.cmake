@@ -61,6 +61,9 @@ set(DEFAULT_CLANG_TIDY_CHECKS
   readability-rary-objects")
 mark_as_advanced(DEFAULT_CLANG_TIDY_CHECKS)
 
+set(DEFAULT_CLANG_TIDY_CONFIG "{CheckOptions: [{key: cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor, value: true}]}")
+mark_as_advanced(DEFAULT_CLANG_TIDY_CONFIG)
+
 set(DEFAULT_CLANG_TIDY_WARNING_ARGS "-checks=${DEFAULT_CLANG_TIDY_CHECKS}")
 message(DEPRECATED " CMake variable DEFAULT_CLANG_TIDY_WARNING_ARGS will be removed please use DEFAULT_CLANG_TIDY_CHECKS")
 mark_as_advanced(DEFAULT_CLANG_TIDY_WARNING_ARGS)
