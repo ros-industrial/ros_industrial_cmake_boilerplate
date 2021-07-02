@@ -2,6 +2,12 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Improve target_clang_tidy to support individual options over single argument list
+* Break out individual function from configure_package
+* Contributors: G.A. vd. Hoorn, Levi Armstrong
+
 0.2.9 (2021-04-09)
 ------------------
 * Add ENABLE functionality to initialize_code_coverage
