@@ -272,6 +272,7 @@ macro(generate_package_config)
 endmacro()
 
 # Performs multiple operation so other packages may find a package
+# If Namespace is provided but no targets it is assumed targets were installed and must be exported
 # Usage: configure_package(NAMSPACE namespace TARGETS targetA targetb)
 #   * It installs the provided targets
 #   * It exports the provided targets under the provided namespace
@@ -289,8 +290,10 @@ macro(configure_package)
   if (ARG_TARGETS)
     install_targets(TARGETS ${ARG_TARGETS})
     generate_package_config(EXPORT NAMESPACE ${ARG_NAMESPACE})
+  elseif(ARG_NAMESPACE)
+    generate_package_config(EXPORT NAMESPACE ${ARG_NAMESPACE})
   else()
-    generate_package_config(NAMESPACE ${ARG_NAMESPACE})
+    generate_package_config()
   endif()
 
   install_ament_hooks()
