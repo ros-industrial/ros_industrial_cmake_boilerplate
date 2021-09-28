@@ -1,0 +1,3 @@
+{
+    "hooks": ["share/ros_industrial_cmake_boilerplate/hook/ament_prefix_path.dsv", "share/ros_industrial_cmake_boilerplate/hook/ros_package_path.dsv"]
+}
