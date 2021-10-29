@@ -61,14 +61,6 @@ set(DEFAULT_CLANG_TIDY_CHECKS
   readability-rary-objects")
 mark_as_advanced(DEFAULT_CLANG_TIDY_CHECKS)
 
-set(DEFAULT_CLANG_TIDY_WARNING_ARGS "-checks=${DEFAULT_CLANG_TIDY_CHECKS}")
-message(DEPRECATED " CMake variable DEFAULT_CLANG_TIDY_WARNING_ARGS will be removed please use DEFAULT_CLANG_TIDY_CHECKS")
-mark_as_advanced(DEFAULT_CLANG_TIDY_WARNING_ARGS)
-
-set(DEFAULT_CLANG_TIDY_ERROR_ARGS "-checks=${DEFAULT_CLANG_TIDY_CHECKS}" "-warnings-as-errors=${DEFAULT_CLANG_TIDY_CHECKS}")
-message(DEPRECATED " CMake variable DEFAULT_CLANG_TIDY_ERROR_ARGS will be removed please use DEFAULT_CLANG_TIDY_CHECKS")
-mark_as_advanced(DEFAULT_CLANG_TIDY_ERROR_ARGS)
-
 # Adds clang-tidy checks to the target, with the given arguments being used
 # as the options set.
 macro(target_clang_tidy target)
