@@ -347,7 +347,7 @@ macro(add_run_tests_target)
   if((NOT DEFINED ARG_ENABLE) OR (ARG_ENABLE))
     add_custom_target(run_tests ALL
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-        COMMAND ${CMAKE_CTEST_COMMAND} -V -O "/tmp/${PROJECT_NAME}_ctest.log" -C $<CONFIGURATION>)
+        COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure -V -O "/tmp/${PROJECT_NAME}_ctest.log" -C $<CONFIGURATION>)
   else()
     add_custom_target(run_tests)
   endif()
