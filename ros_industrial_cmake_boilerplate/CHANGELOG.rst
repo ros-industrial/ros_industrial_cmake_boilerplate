@@ -2,8 +2,8 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.13 (2021-11-10)
+-------------------
 * Add --output-on-failure to add_run_test_target
 * Remove deprecated variables
 * Add CXX_STANDARD_REQUIRED ON
