@@ -38,7 +38,7 @@ if ( NOT GTest_FOUND )
             -DCMAKE_BUILD_TYPE:STRING=Release
             -DCMAKE_CXX_FLAGS:STRING=${GTEST_CXX_FLAGS}
             -DCMAKE_C_FLAGS:STRING=${GTEST_C_FLAGS}
-            -DBUILD_GMOCK:BOOL=OFF
+            -DBUILD_GMOCK:BOOL=ON
             -DBUILD_GTEST:BOOL=ON
             -DBUILD_SHARED_LIBS:BOOL=ON
   )
