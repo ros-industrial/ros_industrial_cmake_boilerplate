@@ -29,7 +29,7 @@ if ( NOT GTest_FOUND )
 
   ExternalProject_Add(GTest
     GIT_REPOSITORY        https://github.com/google/googletest.git
-    GIT_TAG               release-1.8.1
+    GIT_TAG               release-1.10.0
     SOURCE_DIR            ${CMAKE_BINARY_DIR}/../ros_industrial_cmake_boilerplate-googletest-src
     BINARY_DIR            ${CMAKE_BINARY_DIR}/../ros_industrial_cmake_boilerplate-googletest-build
     UPDATE_DISCONNECTED   ${UPDATE_DISCONNECTED}
