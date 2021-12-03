@@ -405,7 +405,7 @@ macro(target_cxx_version target)
 endmacro()
 
 # Find relevant programs
-find_program(CLANG_TIDY_EXE NAMES clang-tidy clang-tidy-10 clang-tidy-9 clang-tidy-8)
+find_program(CLANG_TIDY_EXE NAMES clang-tidy-14 clang-tidy-13 clang-tidy-12 clang-tidy-11 clang-tidy-10 clang-tidy-9 clang-tidy-8 clang-tidy)
 mark_as_advanced(FORCE CLANG_TIDY_EXE)
 if(CLANG_TIDY_EXE)
   message(STATUS "clang-tidy found: ${CLANG_TIDY_EXE}")
