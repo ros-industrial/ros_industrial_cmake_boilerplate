@@ -221,9 +221,9 @@ endmacro()
 
 # Create a default *-config.cmake.in with simple dependency finding
 function(make_default_package_config)
-    set(options HAS_TARGETS)
+    set(oneValueArgs HAS_TARGETS)
     set(multiValueArgs DEPENDENCIES)
-    cmake_parse_arguments(ARG "${options}" "" "${multiValueArgs}" ${ARGN})
+    cmake_parse_arguments(ARG "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
     string(CONCAT ricb_pkgconfig
         "Default *-config.cmake file created by ros-industrial-cmake-boilerplate\n\n"
@@ -272,11 +272,7 @@ macro(generate_package_config)
   endif()
 
   if (NOT ARG_CONFIG_TEMPLATE)
-      if (ARG_EXPORT)
-          make_default_package_config(HAS_TARGETS DEPENDENCIES ${ARG_DEPENDENCIES})
-      else ()
-          make_default_package_config(DEPENDENCIES ${ARG_DEPENDENCIES})
-      endif()
+      make_default_package_config(HAS_TARGETS ${ARG_EXPORT} DEPENDENCIES ${ARG_DEPENDENCIES})
       set(_pkg_config_template "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake.in")
   else ()
       set(_pkg_config_template "${CMAKE_CURRENT_LIST_DIR}/${ARG_CONFIG_TEMPLATE}")
