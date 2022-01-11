@@ -222,7 +222,7 @@ endmacro()
 # Create a default *-config.cmake.in with simple dependency finding
 function(make_default_package_config)
     set(oneValueArgs HAS_TARGETS)
-    set(multiValueArgs DEPENDENCIES)
+    set(multiValueArgs DEPENDENCIES CFG_EXTRAS)
     cmake_parse_arguments(ARG "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
     string(CONCAT ricb_pkgconfig
@@ -247,6 +247,13 @@ function(make_default_package_config)
             "include(\"\${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@-targets.cmake\")\n")
     endif()
 
+    if (ARG_CRG_EXTRAS)
+        string(APPEND ricb_pkgconfig "\n# Extra configuration files\n")
+        foreach(extra_config IN LISTS ARG_CFG_EXTRAS)
+            string(APPEND ricb_pkgconfig "include(\"${extra_config}\")\n")
+        endforeach()
+    endif()
+
     file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake.in ${ricb_pkgconfig})
 endfunction()
 
@@ -260,7 +267,7 @@ endfunction()
 macro(generate_package_config)
   set(options EXPORT)
   set(oneValueArgs NAMESPACE CONFIG_TEMPLATE)
-  set(multiValueArgs DEPENDENCIES)
+  set(multiValueArgs DEPENDENCIES CFG_EXTRAS)
   cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   if (ARG_EXPORT)
@@ -272,10 +279,14 @@ macro(generate_package_config)
   endif()
 
   if (NOT ARG_CONFIG_TEMPLATE)
-      make_default_package_config(HAS_TARGETS ${ARG_EXPORT} DEPENDENCIES ${ARG_DEPENDENCIES})
-      set(_pkg_config_template "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake.in")
+    make_default_package_config(
+      HAS_TARGETS ${ARG_EXPORT}
+      DEPENDENCIES ${ARG_DEPENDENCIES}
+      CFG_EXTRAS ${ARG_CFG_EXTRAS}
+    )
+    set(_pkg_config_template "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake.in")
   else ()
-      set(_pkg_config_template "${CMAKE_CURRENT_LIST_DIR}/${ARG_CONFIG_TEMPLATE}")
+    set(_pkg_config_template "${CMAKE_CURRENT_LIST_DIR}/${ARG_CONFIG_TEMPLATE}")
   endif()
 
   # Create cmake config files
@@ -312,7 +323,7 @@ endmacro()
 macro(configure_package)
   set(options DEFAULT_TEMPLATE)
   set(oneValueArgs NAMESPACE CONFIG_TEMPLATE)
-  set(multiValueArgs TARGETS DEPENDENCIES)
+  set(multiValueArgs TARGETS DEPENDENCIES CFG_EXTRAS)
   cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   if (NOT ${ARG_DEFAULT_TEMPLATE} AND NOT ${ARG_CONFIG_TEMPLATE})
@@ -336,16 +347,19 @@ macro(configure_package)
     generate_package_config(EXPORT
       NAMESPACE ${ARG_NAMESPACE}
       CONFIG_TEMPLATE ${ARG_CONFIG_TEMPLATE}
-      DEPENDENCIES ${ARG_DEPENDENCIES})
+      DEPENDENCIES ${ARG_DEPENDENCIES}
+      CFG_EXTRAS ${ARG_CFG_EXTRAS})
   elseif(ARG_NAMESPACE)
     generate_package_config(EXPORT
       NAMESPACE ${ARG_NAMESPACE}
       CONFIG_TEMPLATE ${ARG_CONFIG_TEMPLATE}
-      DEPENDENCIES ${ARG_DEPENDENCIES})
+      DEPENDENCIES ${ARG_DEPENDENCIES}
+      CFG_EXTRAS ${ARG_CFG_EXTRAS})
   else()
     generate_package_config(
       CONFIG_TEMPLATE ${ARG_CONFIG_TEMPLATE}
-      DEPENDENCIES ${ARG_DEPENDENCIES})
+      DEPENDENCIES ${ARG_DEPENDENCIES}
+      CFG_EXTRAS ${ARG_CFG_EXTRAS})
   endif()
 
   install_ament_hooks()
