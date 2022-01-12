@@ -6,13 +6,15 @@ project(${pkg_extracted_name} VERSION ${pkg_extracted_version})
 
 include(cmake/cmake_tools.cmake)
 
-configure_package()
+configure_package(
+  DEFAULT_TEMPLATE
+  CFG_EXTRAS
+    cmake/cmake_tools.cmake
+    cmake/code_coverage.cmake
+    cmake/extract_package_metadata.cmake
+)
 
-install(FILES
-  "${CMAKE_CURRENT_LIST_DIR}/cmake/cmake_tools.cmake"
-  "${CMAKE_CURRENT_LIST_DIR}/cmake/code_coverage.cmake"
-  "${CMAKE_CURRENT_LIST_DIR}/cmake/extract_package_metadata.cmake"
-  DESTINATION lib/cmake/${PROJECT_NAME})
+install(DIRECTORY cmake DESTINATION lib/cmake/${PROJECT_NAME})
 
 if (RICB_PACKAGE)
   set(CPACK_PACKAGE_VENDOR "ROS-Industrial")
