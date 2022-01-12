@@ -226,7 +226,7 @@ function(make_default_package_config)
     cmake_parse_arguments(ARG "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
     string(CONCAT ricb_pkgconfig
-        "Default *-config.cmake file created by ros-industrial-cmake-boilerplate\n\n"
+        "# Default *-config.cmake file created by ros-industrial-cmake-boilerplate\n\n"
         "@PACKAGE_INIT@\n\n"
         "set(@PROJECT_NAME@_FOUND ON)\n"
     )
@@ -247,10 +247,10 @@ function(make_default_package_config)
             "include(\"\${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@-targets.cmake\")\n")
     endif()
 
-    if (ARG_CRG_EXTRAS)
+    if (ARG_CFG_EXTRAS)
         string(APPEND ricb_pkgconfig "\n# Extra configuration files\n")
         foreach(extra_config IN LISTS ARG_CFG_EXTRAS)
-            string(APPEND ricb_pkgconfig "include(\"${extra_config}\")\n")
+            string(APPEND ricb_pkgconfig "include(\"\${CMAKE_CURRENT_LIST_DIR}/${extra_config}\")\n")
         endforeach()
     endif()
 
@@ -326,7 +326,7 @@ macro(configure_package)
   set(multiValueArgs TARGETS DEPENDENCIES CFG_EXTRAS)
   cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-  if (NOT ${ARG_DEFAULT_TEMPLATE} AND NOT ${ARG_CONFIG_TEMPLATE})
+  if (NOT ARG_DEFAULT_TEMPLATE AND NOT ARG_CONFIG_TEMPLATE)
     message(WARNING
       "Use of configure_package() with a ${PROJECT_NAME}-config.cmake.in file assumed to be present "
       "is deprecated. Use the DEFAULT_TEMPLATE option to automatically create a basic file or use "
