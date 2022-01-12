@@ -217,13 +217,20 @@ This CMake macro simplifies the CMake package configure and install by performin
      NAMESPACE <PACKAGE_NAMESPACE>
      TARGETS <TARGET_NAME_A> <TARGET_NAME_B>
      DEFAULT_TEMPLATE | CONFIG_TEMPLATE <Template file path>
-     DEPENDENCIES <DEP_A> <DEP_B>
+     DEPENDENCIES <deps>...
+     CFG_EXTRAS <cmake files>...
    )
 
-Note the use of either `DEFAULT_TEMPLATE` or `CONFIG_TEMPLATE` for generating the `*-config.cmake`
-file. In simple cases, the file can be generated automatically, using the dependencies listed by the
-`DEPENDENCIES` argument. In more complex cases a manually written file template may be needed. The
-reletive path of this file is provided with the `CONFIG_TEMPLATE` argument.
+Note the use of either `DEFAULT_TEMPLATE` or `CONFIG_TEMPLATE` for describing the `*-config.cmake`
+file that the package will provide.
+
+If `DEFAULT_TEMPLATE` is used, the file will be generated automatically. Package dependencies will
+be included from the arguments listed by `DEPENDENCIES`. Additional configuration CMake scripts can
+also be included with relative paths listed in the `CFG_EXTRAS` argument. The scripts should be
+installed alongside the generated package config file, in `lib/cmake/${PROJECT_NAME}`.
+
+If more complex configuration logic is needed, a manually written template file can be provided
+instead using the `CONFIG_TEMPLATE` argument.
 
 Sub macros used in configure the package
 ----------------------------------------
