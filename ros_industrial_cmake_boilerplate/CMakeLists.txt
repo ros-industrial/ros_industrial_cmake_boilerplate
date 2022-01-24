@@ -7,7 +7,6 @@ project(${pkg_extracted_name} VERSION ${pkg_extracted_version})
 include(cmake/cmake_tools.cmake)
 
 configure_package(
-  DEFAULT_TEMPLATE
   CFG_EXTRAS
     cmake/cmake_tools.cmake
     cmake/code_coverage.cmake

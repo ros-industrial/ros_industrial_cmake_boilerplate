@@ -216,21 +216,16 @@ This CMake macro simplifies the CMake package configure and install by performin
    configure_package(
      NAMESPACE <PACKAGE_NAMESPACE>
      TARGETS <TARGET_NAME_A> <TARGET_NAME_B>
-     DEFAULT_TEMPLATE | CONFIG_TEMPLATE <Template file path>
      DEPENDENCIES <deps>...
      CFG_EXTRAS <cmake files>...
    )
 
-Note the use of either `DEFAULT_TEMPLATE` or `CONFIG_TEMPLATE` for describing the `*-config.cmake`
-file that the package will provide.
-
-If `DEFAULT_TEMPLATE` is used, the file will be generated automatically. Package dependencies will
-be included from the arguments listed by `DEPENDENCIES`. Additional configuration CMake scripts can
-also be included with relative paths listed in the `CFG_EXTRAS` argument. The scripts should be
-installed alongside the generated package config file, in `lib/cmake/${PROJECT_NAME}`.
-
-If more complex configuration logic is needed, a manually written template file can be provided
-instead using the `CONFIG_TEMPLATE` argument.
+To create the config cmake file, the macro by default looks for a configuration template
+``cmake/${PROJECT_NAME}-config.cmake.in`` provided by the package. If not present, a default one
+will be generated. If generated automatically, package dependencies will be included from the
+arguments listed by ``DEPENDENCIES``. Additional configuration CMake scripts can also be included
+with relative paths listed in the ``CFG_EXTRAS`` argument. The scripts should be installed alongside
+the generated package config file, in ``lib/cmake/${PROJECT_NAME}``.
 
 Sub macros used in configure the package
 ----------------------------------------
@@ -254,7 +249,7 @@ This will install the package.xml file
 
 Generate CMake Config Files
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-This will generate and install CMake config files
+This will generate and install CMake config files.
 
 .. code-block:: cmake
 
@@ -266,6 +261,9 @@ This will generate and install CMake config files
 
    # Install CMake config files and not install export targets
    generate_package_config() Install CMake config files and not install export targets
+
+Additionally, ``DEPENDENCIES`` and ``CFG_EXTRAS`` are passed for generated CMake config files as with
+`configure_package`.
 
 Install Ament Hooks
 ^^^^^^^^^^^^^^^^^^^

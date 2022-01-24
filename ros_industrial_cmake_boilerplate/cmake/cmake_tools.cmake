@@ -221,7 +221,7 @@ endmacro()
 
 # Create a default *-config.cmake.in with simple dependency finding
 function(make_default_package_config)
-    set(oneValueArgs HAS_TARGETS)
+    set(oneValueArgs CONFIG_FILE HAS_TARGETS)
     set(multiValueArgs DEPENDENCIES CFG_EXTRAS)
     cmake_parse_arguments(ARG "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -254,7 +254,7 @@ function(make_default_package_config)
         endforeach()
     endif()
 
-    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake.in ${ricb_pkgconfig})
+    file(WRITE ${ARG_CONFIG_FILE} ${ricb_pkgconfig})
 endfunction()
 
 # Performs multiple operation so other packages may find a package
@@ -264,9 +264,9 @@ endfunction()
 #   * generate_package_config() Install cmake config files and not install export targets
 #   * It exports the provided targets under the provided namespace if EXPORT option is set
 #   * It create and install the ${PROJECT_NAME}-config.cmake and ${PROJECT_NAME}-config-version.cmake
-macro(generate_package_config)
+function(generate_package_config)
   set(options EXPORT)
-  set(oneValueArgs NAMESPACE CONFIG_TEMPLATE)
+  set(oneValueArgs NAMESPACE)
   set(multiValueArgs DEPENDENCIES CFG_EXTRAS)
   cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -278,20 +278,33 @@ macro(generate_package_config)
     endif()
   endif()
 
-  if (NOT ARG_CONFIG_TEMPLATE)
+  set(config_template "${CMAKE_CURRENT_LIST_DIR}/cmake/${PROJECT_NAME}-config.cmake.in")
+  if (NOT EXISTS ${config_template})
+    message(STATUS "No package config template file found, creating default one")
+    set(config_template "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake.in")
     make_default_package_config(
+      CONFIG_FILE ${config_template}
       HAS_TARGETS ${ARG_EXPORT}
       DEPENDENCIES ${ARG_DEPENDENCIES}
       CFG_EXTRAS ${ARG_CFG_EXTRAS}
     )
-    set(_pkg_config_template "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake.in")
   else ()
-    set(_pkg_config_template "${CMAKE_CURRENT_LIST_DIR}/${ARG_CONFIG_TEMPLATE}")
+    message(STATUS "Found package config template: ${config_template}")
+    if (ARG_DEPENDENCIES)
+        message(WARNING
+            "Package configuration: DEPENDENCIES provided, but template file '${config_template}'"
+            " exists and will be used instead")
+    endif()
+    if (ARG_CFG_EXTRAS)
+        message(WARNING
+            "Package configuration: CFG_EXTRAS provided, but template file '${config_template}'"
+            " exists and will be used instead")
+    endif()
   endif()
 
   # Create cmake config files
   include(CMakePackageConfigHelpers)
-  configure_package_config_file(${_pkg_config_template}
+  configure_package_config_file(${config_template}
     ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake
     INSTALL_DESTINATION lib/cmake/${PROJECT_NAME}
     NO_CHECK_REQUIRED_COMPONENTS_MACRO)
@@ -311,7 +324,7 @@ macro(generate_package_config)
       export(EXPORT ${PROJECT_NAME}-targets FILE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-targets.cmake)
     endif()
   endif()
-endmacro()
+endfunction()
 
 # Performs multiple operation so other packages may find a package
 # If Namespace is provided but no targets it is assumed targets were installed and must be exported
@@ -321,22 +334,8 @@ endmacro()
 #   * It installs the package.xml file
 #   * It create and install the ${PROJECT_NAME}-config.cmake and ${PROJECT_NAME}-config-version.cmake
 macro(configure_package)
-  set(options DEFAULT_TEMPLATE)
-  set(oneValueArgs NAMESPACE CONFIG_TEMPLATE)
   set(multiValueArgs TARGETS DEPENDENCIES CFG_EXTRAS)
-  cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
-  if (NOT ARG_DEFAULT_TEMPLATE AND NOT ARG_CONFIG_TEMPLATE)
-    message(WARNING
-      "Use of configure_package() with a ${PROJECT_NAME}-config.cmake.in file assumed to be present "
-      "is deprecated. Use the DEFAULT_TEMPLATE option to automatically create a basic file or use "
-      "CONFIG_TEMPLATE to explicitly specify the location of the template.")
-    set(ARG_CONFIG_TEMPLATE "cmake/${PROJECT_NAME}-config.cmake.in")
-  endif()
-
-  if (${ARG_DEFAULT_TEMPLATE})
-    set(${ARG_CONFIG_TEMPLATE} "")
-  endif()
+  cmake_parse_arguments(ARG "" "" "${multiValueArgs}" ${ARGN})
 
   # install package.xml
   install_pkgxml()
@@ -346,18 +345,15 @@ macro(configure_package)
     install_targets(TARGETS ${ARG_TARGETS})
     generate_package_config(EXPORT
       NAMESPACE ${ARG_NAMESPACE}
-      CONFIG_TEMPLATE ${ARG_CONFIG_TEMPLATE}
       DEPENDENCIES ${ARG_DEPENDENCIES}
       CFG_EXTRAS ${ARG_CFG_EXTRAS})
   elseif(ARG_NAMESPACE)
     generate_package_config(EXPORT
       NAMESPACE ${ARG_NAMESPACE}
-      CONFIG_TEMPLATE ${ARG_CONFIG_TEMPLATE}
       DEPENDENCIES ${ARG_DEPENDENCIES}
       CFG_EXTRAS ${ARG_CFG_EXTRAS})
   else()
     generate_package_config(
-      CONFIG_TEMPLATE ${ARG_CONFIG_TEMPLATE}
       DEPENDENCIES ${ARG_DEPENDENCIES}
       CFG_EXTRAS ${ARG_CFG_EXTRAS})
   endif()
