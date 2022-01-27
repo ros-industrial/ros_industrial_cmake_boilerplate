@@ -219,6 +219,44 @@ macro(install_pkgxml)
   install(FILES package.xml DESTINATION share/${PROJECT_NAME})
 endmacro()
 
+# Create a default *-config.cmake.in with simple dependency finding
+function(make_default_package_config)
+    set(oneValueArgs CONFIG_FILE HAS_TARGETS)
+    set(multiValueArgs DEPENDENCIES CFG_EXTRAS)
+    cmake_parse_arguments(ARG "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    string(CONCAT ricb_pkgconfig
+        "# Default *-config.cmake file created by ros-industrial-cmake-boilerplate\n\n"
+        "@PACKAGE_INIT@\n\n"
+        "set(@PROJECT_NAME@_FOUND ON)\n"
+    )
+
+    if (ARG_DEPENDENCIES)
+        set(find_dep_cmds "include(CMakeFindDependencyMacro)")
+        foreach(dep IN LISTS ARG_DEPENDENCIES)
+            list(APPEND find_dep_cmds "find_dependency(${dep})")
+        endforeach()
+
+        # Convert list to newline-separated string
+        string(REPLACE ";" "\n" ricb_dependencies "${find_dep_cmds}")
+        string(APPEND ricb_pkgconfig "\n# Dependencies\n" "${ricb_dependencies}\n")
+    endif()
+
+    if (ARG_HAS_TARGETS)
+        string(APPEND ricb_pkgconfig "\n# Targets\n"
+            "include(\"\${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@-targets.cmake\")\n")
+    endif()
+
+    if (ARG_CFG_EXTRAS)
+        string(APPEND ricb_pkgconfig "\n# Extra configuration files\n")
+        foreach(extra_config IN LISTS ARG_CFG_EXTRAS)
+            string(APPEND ricb_pkgconfig "include(\"\${CMAKE_CURRENT_LIST_DIR}/${extra_config}\")\n")
+        endforeach()
+    endif()
+
+    file(WRITE ${ARG_CONFIG_FILE} ${ricb_pkgconfig})
+endfunction()
+
 # Performs multiple operation so other packages may find a package
 # Usage:
 #   * generate_package_config(EXPORT NAMSPACE namespace) Install export targets with provided namespace
@@ -226,10 +264,11 @@ endmacro()
 #   * generate_package_config() Install cmake config files and not install export targets
 #   * It exports the provided targets under the provided namespace if EXPORT option is set
 #   * It create and install the ${PROJECT_NAME}-config.cmake and ${PROJECT_NAME}-config-version.cmake
-macro(generate_package_config)
+function(generate_package_config)
   set(options EXPORT)
   set(oneValueArgs NAMESPACE)
-  cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "" ${ARGN})
+  set(multiValueArgs DEPENDENCIES CFG_EXTRAS)
+  cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   if (ARG_EXPORT)
     if (ARG_NAMESPACE)
@@ -239,9 +278,33 @@ macro(generate_package_config)
     endif()
   endif()
 
+  set(config_template "${CMAKE_CURRENT_LIST_DIR}/cmake/${PROJECT_NAME}-config.cmake.in")
+  if (NOT EXISTS ${config_template})
+    message(STATUS "No package config template file found, creating default one")
+    set(config_template "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake.in")
+    make_default_package_config(
+      CONFIG_FILE ${config_template}
+      HAS_TARGETS ${ARG_EXPORT}
+      DEPENDENCIES ${ARG_DEPENDENCIES}
+      CFG_EXTRAS ${ARG_CFG_EXTRAS}
+    )
+  else ()
+    message(STATUS "Found package config template: ${config_template}")
+    if (ARG_DEPENDENCIES)
+        message(WARNING
+            "Package configuration: DEPENDENCIES provided, but template file '${config_template}'"
+            " exists and will be used instead")
+    endif()
+    if (ARG_CFG_EXTRAS)
+        message(WARNING
+            "Package configuration: CFG_EXTRAS provided, but template file '${config_template}'"
+            " exists and will be used instead")
+    endif()
+  endif()
+
   # Create cmake config files
   include(CMakePackageConfigHelpers)
-  configure_package_config_file(${CMAKE_CURRENT_LIST_DIR}/cmake/${PROJECT_NAME}-config.cmake.in
+  configure_package_config_file(${config_template}
     ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake
     INSTALL_DESTINATION lib/cmake/${PROJECT_NAME}
     NO_CHECK_REQUIRED_COMPONENTS_MACRO)
@@ -261,7 +324,7 @@ macro(generate_package_config)
       export(EXPORT ${PROJECT_NAME}-targets FILE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-targets.cmake)
     endif()
   endif()
-endmacro()
+endfunction()
 
 # Performs multiple operation so other packages may find a package
 # If Namespace is provided but no targets it is assumed targets were installed and must be exported
@@ -271,9 +334,8 @@ endmacro()
 #   * It installs the package.xml file
 #   * It create and install the ${PROJECT_NAME}-config.cmake and ${PROJECT_NAME}-config-version.cmake
 macro(configure_package)
-  set(oneValueArgs NAMESPACE)
-  set(multiValueArgs TARGETS)
-  cmake_parse_arguments(ARG "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+  set(multiValueArgs TARGETS DEPENDENCIES CFG_EXTRAS)
+  cmake_parse_arguments(ARG "" "" "${multiValueArgs}" ${ARGN})
 
   # install package.xml
   install_pkgxml()
@@ -281,11 +343,19 @@ macro(configure_package)
   # install and export targets if provided and generate package config
   if (ARG_TARGETS)
     install_targets(TARGETS ${ARG_TARGETS})
-    generate_package_config(EXPORT NAMESPACE ${ARG_NAMESPACE})
+    generate_package_config(EXPORT
+      NAMESPACE ${ARG_NAMESPACE}
+      DEPENDENCIES ${ARG_DEPENDENCIES}
+      CFG_EXTRAS ${ARG_CFG_EXTRAS})
   elseif(ARG_NAMESPACE)
-    generate_package_config(EXPORT NAMESPACE ${ARG_NAMESPACE})
+    generate_package_config(EXPORT
+      NAMESPACE ${ARG_NAMESPACE}
+      DEPENDENCIES ${ARG_DEPENDENCIES}
+      CFG_EXTRAS ${ARG_CFG_EXTRAS})
   else()
-    generate_package_config()
+    generate_package_config(
+      DEPENDENCIES ${ARG_DEPENDENCIES}
+      CFG_EXTRAS ${ARG_CFG_EXTRAS})
   endif()
 
   install_ament_hooks()
