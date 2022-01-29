@@ -220,6 +220,24 @@ This CMake macro simplifies the CMake package configure and install by performin
      CFG_EXTRAS <cmake files>...
    )
 
+Example:
+
+.. code-block:: cmake
+
+   configure_package(
+     NAMESPACE
+       tesseract
+     TARGETS
+       ${PROJECT_NAME}
+     DEPENDENCIES
+       Eigen3
+       TinyXML2
+       yaml-cpp
+       "Boost COMPONENTS system filesystem serialization"
+     CFG_EXTRAS
+       cmake/tesseract_common-extras.cmake
+   )
+
 To create the config cmake file, the macro by default looks for a configuration template
 ``cmake/${PROJECT_NAME}-config.cmake.in`` provided by the package. If not present, a default one
 will be generated. If generated automatically, package dependencies will be included from the
