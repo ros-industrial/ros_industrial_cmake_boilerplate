@@ -328,14 +328,15 @@ endfunction()
 
 # Performs multiple operation so other packages may find a package
 # If Namespace is provided but no targets it is assumed targets were installed and must be exported
-# Usage: configure_package(NAMSPACE namespace TARGETS targetA targetb)
+# Usage: configure_package(NAMSPACE namespace TARGETS targetA targetb DEPENDENCIES Eigen3 "Boost COMPONENTS system filesystem" CFG_EXTRAS target-extras.cmake)
 #   * It installs the provided targets
 #   * It exports the provided targets under the provided namespace
 #   * It installs the package.xml file
 #   * It create and install the ${PROJECT_NAME}-config.cmake and ${PROJECT_NAME}-config-version.cmake
 macro(configure_package)
+  set(oneValueArgs NAMESPACE)
   set(multiValueArgs TARGETS DEPENDENCIES CFG_EXTRAS)
-  cmake_parse_arguments(ARG "" "" "${multiValueArgs}" ${ARGN})
+  cmake_parse_arguments(ARG "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   # install package.xml
   install_pkgxml()
