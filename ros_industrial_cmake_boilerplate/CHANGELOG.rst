@@ -2,6 +2,12 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add missing one value arg NAMESPACE to configure_package
+* Auto generation of `*-config.cmake` files for simple cases (`#59 <https://github.com/ros-industrial/ros_industrial_cmake_boilerplate/issues/59>`_)
+* Contributors: Josh Langsfeld, Levi Armstrong
+
 0.2.14 (2021-12-03)
 -------------------
 * Add newer version of clang-tidy to the list
