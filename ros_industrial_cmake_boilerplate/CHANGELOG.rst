@@ -2,8 +2,8 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.15 (2022-01-30)
+-------------------
 * Add missing one value arg NAMESPACE to configure_package
 * Auto generation of `*-config.cmake` files for simple cases (`#59 <https://github.com/ros-industrial/ros_industrial_cmake_boilerplate/issues/59>`_)
 * Contributors: Josh Langsfeld, Levi Armstrong
