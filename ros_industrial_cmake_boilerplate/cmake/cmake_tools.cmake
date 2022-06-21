@@ -502,3 +502,64 @@ else()
   message(STATUS "cppcheck not found!")
   set(CMAKE_CXX_CPPCHECK "" CACHE STRING "" FORCE) # delete it
 endif()
+
+macro(cpack)
+  set(oneValueArgs
+      VERSION
+      MAINTAINER
+      VENDOR
+      DESCRIPTION
+      LICENSE_FILE
+      README_FILE
+      PACKAGE_PREFIX)
+  set(multiValueArgs LINUX_DEPENDS WINDOWS_DEPENDS)
+  cmake_parse_arguments(
+    ARG
+    ""
+    "${oneValueArgs}"
+    "${multiValueArgs}"
+    ${ARGN})
+
+  set(CPACK_PACKAGE_VENDOR ${ARG_VENDOR})
+  set(CPACK_RESOURCE_FILE_LICENSE ${ARG_LICENSE_FILE})
+  set(CPACK_RESOURCE_FILE_README ${ARG_README_FILE})
+  if(UNIX)
+    string(
+      REPLACE "_"
+              "-"
+              PACKAGE_NAME
+              ${PROJECT_NAME})
+    set(CPACK_GENERATOR "DEB;TXZ")
+
+    if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+      set(DEB_ARCH "amd64")
+    else()
+      set(DEB_ARCH ${CMAKE_SYSTEM_PROCESSOR})
+    endif()
+
+    set(CPACK_PACKAGE_FILE_NAME "${ARG_PACKAGE_PREFIX}${PACKAGE_NAME}_${DEB_ARCH}_linux_${ARG_VERSION}")
+    set(CPACK_DEBIAN_PACKAGE_NAME "${ARG_PACKAGE_PREFIX}${PACKAGE_NAME}")
+    set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE ${DEB_ARCH})
+    set(CPACK_DEBIAN_PACKAGE_MAINTAINER ${ARG_MAINTAINER})
+    set(CPACK_DEBIAN_PACKAGE_DESCRIPTION ${ARG_DESCRIPTION})
+    set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS=ON)
+    string(
+      REPLACE ";"
+              ","
+              CPACK_DEBIAN_PACKAGE_DEPENDS
+              "${ARG_LINUX_DEPENDS}")
+  elseif(WIN32)
+    set(CPACK_GENERATOR "NuGet;TXZ")
+    set(CPACK_PACKAGE_FILE_NAME
+        "${ARG_PACKAGE_PREFIX}${PACKAGE_NAME}_${CMAKE_SYSTEM_PROCESSOR}_windows_${ARG_VERSION}")
+    set(CPACK_NUGET_PACKAGE_NAME
+        "${ARG_PACKAGE_PREFIX}${PACKAGE_NAME}_${CMAKE_SYSTEM_PROCESSOR}_windows")
+    set(CPACK_NUGET_PACKAGE_DESCRIPTION ${ARG_DESCRIPTION})
+    string(
+      REPLACE ";"
+              ","
+              CPACK_NUGET_PACKAGE_DEPENDENCIES
+              "${ARG_WINDOWS_DEPENDS}")
+  endif()
+  include(CPack)
+endmacro()
