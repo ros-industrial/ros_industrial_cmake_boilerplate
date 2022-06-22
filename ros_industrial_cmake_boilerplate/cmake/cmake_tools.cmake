@@ -523,12 +523,12 @@ macro(cpack)
   set(CPACK_PACKAGE_VENDOR ${ARG_VENDOR})
   set(CPACK_RESOURCE_FILE_LICENSE ${ARG_LICENSE_FILE})
   set(CPACK_RESOURCE_FILE_README ${ARG_README_FILE})
+  string(
+    REPLACE "_"
+            "-"
+            PACKAGE_NAME
+            ${PROJECT_NAME})
   if(UNIX)
-    string(
-      REPLACE "_"
-              "-"
-              PACKAGE_NAME
-              ${PROJECT_NAME})
     set(CPACK_GENERATOR "DEB;TXZ")
 
     if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
