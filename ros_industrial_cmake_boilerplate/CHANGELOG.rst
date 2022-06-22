@@ -2,8 +2,8 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.16 (2022-06-22)
+-------------------
 * Always treat package description as a single string during extraction
 * Fix cpack to generate correct names for nuget packages (`#64 <https://github.com/ros-industrial/ros_industrial_cmake_boilerplate/issues/64>`_)
 * Added CPack macro from tesseract (`#62 <https://github.com/ros-industrial/ros_industrial_cmake_boilerplate/issues/62>`_)
