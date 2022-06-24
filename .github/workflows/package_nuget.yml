@@ -1,50 +1,60 @@
-name: Package-Windows-Build
+name:  Package-Windows-Build
 
 on:
   push:
     tags:
-    - '*'
+      - '*'
 
   # allow manually starting this workflow
   workflow_dispatch:
 
 jobs:
-  windows_ci:
-    name: Noetic
-    runs-on: windows-latest
-    env:
-      ROS_DISTRO: noetic
-      CPACK_WORKING_DIR: ./../../build_isolated/ros_industrial_cmake_boilerplate/devel
+  NuGet:
+    name: Windows-2019
+    runs-on: windows-2019
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
-        submodules: recursive
-        path: src/ros_industrial_cmake_boilerplate
-    - name: Build
+        path: workspace/src/ros_industrial_cmake_boilerplate
+
+    - name: Create artifacts directory
+      run: |
+        mkdir artifacts
+
+    - name: install-depends
       shell: cmd
       run: |
-        choco sources add -n=roswin -s https://aka.ms/ros/public --priority 1
-        choco install ros-%ROS_DISTRO%-desktop_full -y --no-progress
+        vcpkg integrate install
+        python -m pip install vcstool -q
+        python -m pip install colcon-common-extensions -q
+        python -m pip install ninja -q
 
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\Tools\VsDevCmd.bat" -arch=amd64 -host_arch=amd64
-        call "C:\opt\ros\%ROS_DISTRO%\x64\setup.bat"
+    - name: configure-msvc
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: x64
 
-        choco install llvm -y --no-progress
-
-        catkin_make_isolated --cmake-args -DCMAKE_BUILD_TYPE=Release -DRICB_PACKAGE=ON
-
-    - name: NuGet Package
-      shell: bash
+    - name: build-workspace
+      working-directory: workspace
+      shell: cmd
       run: |
-        cd src/ros_industrial_cmake_boilerplate
-        bash .run-cpack
+        colcon build --event-handlers console_direct+ --cmake-args -G "Ninja" -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Release -DRICB_PACKAGE=ON
+        if %ERRORLEVEL% GEQ 1 exit 1
+
+    - name: Package
+      working-directory: workspace/build/ros_industrial_cmake_boilerplate
+      run: |
+        cpack --config CPackConfig.cmake
+        cp ./*.nupkg ${{ github.workspace }}/artifacts
+        cp ./*.tar.xz ${{ github.workspace }}/artifacts
 
     - uses: actions/upload-artifact@v2
       with:
         name: nuget_package
-        path: ./src/ros_industrial_cmake_boilerplate/*.nupkg
+        path: ${{ github.workspace }}/artifacts/*.nupkg
 
     - uses: actions/upload-artifact@v2
       with:
         name: archive_package
-        path: ./src/ros_industrial_cmake_boilerplate/*.tar.xz
+        path: ${{ github.workspace }}/artifacts/*.tar.xz
+

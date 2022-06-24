@@ -16,22 +16,18 @@ configure_package(
 install(DIRECTORY cmake DESTINATION lib/cmake/${PROJECT_NAME})
 
 if (RICB_PACKAGE)
-  set(CPACK_PACKAGE_VENDOR "ROS-Industrial")
-  set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_CURRENT_LIST_DIR}/../LICENSE)
-  set(CPACK_RESOURCE_FILE_README ${CMAKE_CURRENT_LIST_DIR}/../README.rst)
-
-  if (UNIX)
-    set(CPACK_GENERATOR "DEB;TXZ")
-    set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}_${CMAKE_SYSTEM_PROCESSOR}_linux_${pkg_extracted_version}")
-    set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE ${CMAKE_SYSTEM_PROCESSOR})
-    set(CPACK_DEBIAN_PACKAGE_MAINTAINER <https://github.com/ros-industrial/ros_industrial_cmake_boilerplate>)
-    set(CPACK_DEBIAN_PACKAGE_DESCRIPTION ${pkg_extracted_description})
-    set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS=ON)
-  elseif(WIN32)
-    set(CPACK_GENERATOR "NuGet;TXZ")
-    set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}_${CMAKE_SYSTEM_PROCESSOR}_windows_${pkg_extracted_version}")
-    set(CPACK_NUGET_PACKAGE_NAME "${PROJECT_NAME}_${CMAKE_SYSTEM_PROCESSOR}_windows")
-    set(CPACK_NUGET_PACKAGE_DESCRIPTION ${pkg_extracted_description})
-  endif()
-  include(CPack)
+  cpack(
+    VERSION
+    ${pkg_extracted_version}
+    MAINTAINER
+    <https://github.com/tesseract-robotics/ros_industrial_cmake_boilerplate>
+    VENDOR
+    "ROS-Industrial"
+    DESCRIPTION
+    "${PROJECT_NAME}"
+    LICENSE_FILE
+    ${CMAKE_CURRENT_LIST_DIR}/../LICENSE
+    README_FILE
+    ${CMAKE_CURRENT_LIST_DIR}/../README.rst
+  )
 endif()
