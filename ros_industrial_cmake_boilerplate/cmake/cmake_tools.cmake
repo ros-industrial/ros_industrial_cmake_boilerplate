@@ -393,6 +393,7 @@ macro(find_gtest)
       endif()
     endif()
   endif()
+  include(GoogleTest)
 endmacro()
 
 # This macro call the appropriate gtest function to add a test based on the cmake version
