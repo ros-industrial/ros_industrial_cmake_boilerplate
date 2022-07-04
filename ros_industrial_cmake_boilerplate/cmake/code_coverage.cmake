@@ -203,8 +203,9 @@ endmacro()
 # Required:
 # TARGET_NAME - Name of the target to generate code coverage for.
 # Optional:
-# PUBLIC - Sets the visibility for added compile options to targets to PUBLIC instead of the default of PRIVATE.
-# PUBLIC - Sets the visibility for added compile options to targets to INTERFACE instead of the default of PRIVATE.
+# INTERFACE - Sets the visibility for added compile options to targets to INTERFACE instead of the default of PLAIN.
+# PUBLIC - Sets the visibility for added compile options to targets to PUBLIC instead of the default of PLAIN.
+# PRIVATE - Sets the visibility for added compile options to targets to PRIVATE instead of the default of PLAIN.
 # AUTO - Adds the target to the 'ccov' target so that it can be run in a batch with others easily. Effective on executable targets.
 # ALL - Adds the target to the 'ccov-all' and 'ccov-all-report' targets, which merge several executable targets coverage data to a single report. Effective on executable targets.
 # EXTERNAL - For GCC's lcov, allows the profiling of 'external' files from the processing directory
@@ -220,8 +221,9 @@ function(target_code_coverage TARGET_NAME)
       AUTO
       ALL
       EXTERNAL
+      INTERFACE
       PUBLIC
-      INTERFACE)
+      PRIVATE)
   set(single_value_keywords COVERAGE_TARGET_NAME ENABLE)
   set(multi_value_keywords EXCLUDE OBJECTS ARGS)
   cmake_parse_arguments(
@@ -231,14 +233,15 @@ function(target_code_coverage TARGET_NAME)
     "${multi_value_keywords}"
     ${ARGN})
 
-  # Set the visibility of target functions to PUBLIC, INTERFACE or default to
-  # PRIVATE.
+  # Set the visibility of target functions to PUBLIC, INTERFACE, PRIVATE or default to PLAIN.
   if(target_code_coverage_PUBLIC)
     set(TARGET_VISIBILITY PUBLIC)
   elseif(target_code_coverage_INTERFACE)
     set(TARGET_VISIBILITY INTERFACE)
-  else()
+  elseif(target_code_coverage_PRIVATE)
     set(TARGET_VISIBILITY PRIVATE)
+  else()
+    set(TARGET_VISIBILITY "")
   endif()
 
   if(NOT target_code_coverage_COVERAGE_TARGET_NAME)
