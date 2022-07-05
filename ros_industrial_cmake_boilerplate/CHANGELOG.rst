@@ -2,8 +2,8 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.3.0 (2022-07-05)
+------------------
 * Fix target_code_coverage to support targets with plain visibility
 * Update target_cxx_version to support windows
 * Add missing include(GoogleTest) to find_gtest() macro
