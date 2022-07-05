@@ -2,6 +2,14 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix target_code_coverage to support targets with plain visibility
+* Update target_cxx_version to support windows
+* Add missing include(GoogleTest) to find_gtest() macro
+* Update package CI to use colcon
+* Contributors: Levi Armstrong
+
 0.2.16 (2022-06-22)
 -------------------
 * Always treat package description as a single string during extraction
