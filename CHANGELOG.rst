@@ -2,6 +2,11 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Make deps installation non-interactive (`#76 <https://github.com/marip8/cmake_common_scripts/issues/76>`_)
+* Contributors: Michael Ripperger
+
 0.4.4 (2023-02-28)
 ------------------
 * Removed sudo from CI commands (`#75 <https://github.com/marip8/cmake_common_scripts/issues/75>`_)
