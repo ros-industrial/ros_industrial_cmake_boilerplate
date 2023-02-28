@@ -2,6 +2,11 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Removed sudo from CI commands (`#75 <https://github.com/marip8/cmake_common_scripts/issues/75>`_)
+* Contributors: Michael Ripperger
+
 0.4.3 (2023-02-28)
 ------------------
 * Fixed CI yaml file (`#74 <https://github.com/marip8/cmake_common_scripts/issues/74>`_)
