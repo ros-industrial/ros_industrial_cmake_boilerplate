@@ -10,8 +10,9 @@ on:
 
 jobs:
   Debian:
-    name: Noetic
+    name: Ubuntu Focal
     runs-on: ubuntu-latest
+    image: ubuntu:20.04
     steps:
       - uses: actions/checkout@v3
         with:
