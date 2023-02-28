@@ -2,6 +2,13 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Organization Updates (`#72 <https://github.com/ros-industrial/ros_industrial_cmake_boilerplate/issues/72>`_)
+  * Removed ricb subdirectory
+  * Updated maintainer information
+* Contributors: Michael Ripperger
+
 0.4.0 (2023-02-20)
 ------------------
 
