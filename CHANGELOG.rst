@@ -2,6 +2,13 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Minor Updates (`#73 <https://github.com/marip8/cmake_common_scripts/issues/73>`_)
+  * Updated relative locations of license and README files
+  * Updated debian build job to run on Ubuntu 20.04
+* Contributors: Michael Ripperger
+
 0.4.1 (2023-02-28)
 ------------------
 * Organization Updates (`#72 <https://github.com/ros-industrial/ros_industrial_cmake_boilerplate/issues/72>`_)
