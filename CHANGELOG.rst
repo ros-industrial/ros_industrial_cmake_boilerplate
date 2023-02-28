@@ -2,6 +2,11 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fixed CI yaml file (`#74 <https://github.com/marip8/cmake_common_scripts/issues/74>`_)
+* Contributors: Michael Ripperger
+
 0.4.2 (2023-02-28)
 ------------------
 * Minor Updates (`#73 <https://github.com/marip8/cmake_common_scripts/issues/73>`_)
