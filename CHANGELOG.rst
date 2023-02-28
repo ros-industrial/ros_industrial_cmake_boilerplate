@@ -2,8 +2,8 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.4.5 (2023-02-28)
+------------------
 * Make deps installation non-interactive (`#76 <https://github.com/marip8/cmake_common_scripts/issues/76>`_)
 * Contributors: Michael Ripperger
 
