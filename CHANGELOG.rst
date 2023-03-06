@@ -2,8 +2,8 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.4.6 (2023-03-06)
+------------------
 * Fix artifacts directory in github actions (`#77 <https://github.com/marip8/cmake_common_scripts/issues/77>`_)
 * Contributors: Chris Schindlbeck
 
