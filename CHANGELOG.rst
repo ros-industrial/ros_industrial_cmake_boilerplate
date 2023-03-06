@@ -2,6 +2,11 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix artifacts directory in github actions (`#77 <https://github.com/marip8/cmake_common_scripts/issues/77>`_)
+* Contributors: Chris Schindlbeck
+
 0.4.5 (2023-02-28)
 ------------------
 * Make deps installation non-interactive (`#76 <https://github.com/marip8/cmake_common_scripts/issues/76>`_)
