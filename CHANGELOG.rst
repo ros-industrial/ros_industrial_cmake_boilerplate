@@ -2,8 +2,8 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.4.7 (2023-06-27)
+------------------
 * Add python hook to install_ament_hooks
 * Contributors: Levi Armstrong
 
