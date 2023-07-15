@@ -225,7 +225,7 @@ function(target_code_coverage TARGET_NAME)
       PUBLIC
       PRIVATE)
   set(single_value_keywords COVERAGE_TARGET_NAME ENABLE)
-  set(multi_value_keywords EXCLUDE OBJECTS ARGS)
+  set(multi_value_keywords RUN_COMMAND EXCLUDE OBJECTS ARGS)
   cmake_parse_arguments(
     target_code_coverage
     "${options}"
@@ -247,6 +247,10 @@ function(target_code_coverage TARGET_NAME)
   if(NOT target_code_coverage_COVERAGE_TARGET_NAME)
     # If a specific name was given, use that instead.
     set(target_code_coverage_COVERAGE_TARGET_NAME ${TARGET_NAME})
+  endif()
+
+  if(NOT target_code_coverage_RUN_COMMAND)
+    set(target_code_coverage_RUN_COMMAND $<TARGET_FILE:${TARGET_NAME}> ${target_code_coverage_ARGS})
   endif()
 
   if(CODE_COVERAGE_ADDED AND ((NOT DEFINED target_code_coverage_ENABLE) OR (target_code_coverage_ENABLE)))
@@ -321,7 +325,7 @@ function(target_code_coverage TARGET_NAME)
           ccov-run-${target_code_coverage_COVERAGE_TARGET_NAME}
           COMMAND
             LLVM_PROFILE_FILE=${target_code_coverage_COVERAGE_TARGET_NAME}.profraw
-            $<TARGET_FILE:${TARGET_NAME}> ${target_code_coverage_ARGS}
+            ${target_code_coverage_RUN_COMMAND}
           COMMAND echo "-object=$<TARGET_FILE:${TARGET_NAME}>" >>
                   ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/binaries.list
           COMMAND
@@ -385,7 +389,7 @@ function(target_code_coverage TARGET_NAME)
         # Run the executable, generating coverage information
         add_custom_target(
           ccov-run-${target_code_coverage_COVERAGE_TARGET_NAME}
-          COMMAND $<TARGET_FILE:${TARGET_NAME}> ${target_code_coverage_ARGS}
+          COMMAND ${target_code_coverage_RUN_COMMAND}
           DEPENDS ccov-preprocessing ${TARGET_NAME})
 
         # Generate exclusion string for use

@@ -424,3 +424,18 @@ Example 3: Target added to the 'ccov' and 'ccov-all' targets
    add_code_coverage_all_targets(EXCLUDE test/*) # Adds the 'ccov-all' target set and sets it to exclude all files in test/ folders.
    add_executable(theExe main.cpp non_covered.cpp)
    target_code_coverage(theExe AUTO ALL EXCLUDE non_covered.cpp test/*) # As an executable target, adds to the 'ccov' and ccov-all' targets, and the reports will exclude the non-covered.cpp file, and any files in a test/ folder.
+
+Example 4: ROS add_rostest_gtest usage
+------------------------------------------------------------
+
+.. code-block:: cmake
+
+   add_rostest_gtest(test_node test/test_node.test test/test_node.cpp)
+   target_include_directories(test_node SYSTEM PUBLIC {catkin_INCLUDE_DIRS})
+   target_link_libraries(test_node ${catkin_LIBRARIES})
+   target_code_coverage(
+     test_node
+     ALL
+     RUN_COMMAND rostest test_node test_node.test
+     EXCLUDE ${COVERAGE_EXCLUDE}
+     ENABLE ${ENABLE_CODE_COVERAGE})
