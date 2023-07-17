@@ -2,8 +2,8 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.4.8 (2023-07-17)
+------------------
 * Add code coverage executable RUN_COMMAND mulit-arg to support rostest (`#80 <https://github.com/ros-industrial/ros_industrial_cmake_boilerplate/issues/80>`_)
 * Contributors: Levi Armstrong
 
