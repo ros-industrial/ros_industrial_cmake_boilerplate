@@ -380,6 +380,18 @@ To add coverage targets, such as calling `make ccov` to generate the actual cove
 
 .. note:: Each of the macros can take an ENABLE ON/OFF so they can easily be enabled by an external flag. If not provided it is automatically enabled.
 
+Exclude Code From Code Coverage
+-------------------------------
+
+================== ===========
+Keyword             Description
+================== ===========
+LCOV_EXCL_LINE     Lines containing this marker will be excluded.
+LCOV_EXCL_START    Marks the beginning of an excluded section. The current line is part of this section.
+LCOV_EXCL_STOP     Marks the end of an excluded section. The current line not part of this section.
+================== ===========
+
+.. note:: You can replace LCOV above with GCOV or GCOVR.
 
 Example 1: All targets instrumented
 -----------------------------------
