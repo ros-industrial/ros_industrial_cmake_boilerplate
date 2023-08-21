@@ -13,8 +13,6 @@ configure_package(
     cmake/extract_package_metadata.cmake
 )
 
-install(DIRECTORY cmake DESTINATION lib/cmake/${PROJECT_NAME})
-
 if (RICB_PACKAGE)
   cpack(
     VERSION
