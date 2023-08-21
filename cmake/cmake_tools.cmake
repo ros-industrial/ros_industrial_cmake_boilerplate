@@ -310,7 +310,7 @@ function(make_default_package_config)
 endfunction()
 
 # Performs multiple operation so other packages may find a package and package components
-# The defualt export name is ${PROJECT_NAME} but it can be overriden by providing EXPORT_NAME
+# The default export name is ${PROJECT_NAME} but it can be overriden by providing EXPORT_NAME
 # Options:
 #    * EXPORT    - indicate if trargets should be exported
 #    * COMPONENT - indicate if generating a package's component config

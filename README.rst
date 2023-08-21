@@ -208,6 +208,8 @@ This CMake macro simplifies the CMake package configure and install by performin
 
 Configure Package
 -----------------
+Performs multiple operation so other packages may find a package
+
 If Namespace is provided but no targets it is assumed targets were installed and must be exported
 
 * One Value Args:
@@ -261,6 +263,8 @@ the generated package config file, in ``lib/cmake/${PROJECT_NAME}``.
 
 Configure Component
 -------------------
+Performs multiple operation so other packages may find a package's component
+
 If Namespace is provided but no targets it is assumed targets were installed and must be exported
 
 * One Value Args:
@@ -335,7 +339,7 @@ This will install the package.xml file
 Generate CMake Config Files
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Performs multiple operation so other packages may find a package and package components
-The defualt export name is ${PROJECT_NAME} but it can be overriden by providing EXPORT_NAME
+The default export name is ${PROJECT_NAME} but it can be overriden by providing EXPORT_NAME
 
 * Options:
    * EXPORT    - indicate if trargets should be exported
@@ -375,7 +379,7 @@ The defualt export name is ${PROJECT_NAME} but it can be overriden by providing 
      EXPORT_NAME kdl
      NAMESPACE namespace
      DEPENDENCIES packageA packageB
-     CFG_EXTRAS extraA.cmake extraB.cmake
+     CFG_EXTRAS extraA.cmake extraB.cmake)
 
 Additionally, ``DEPENDENCIES``, ``CFG_EXTRAS`` and ``SUPPORTED_COMPONENTS`` are passed for generated CMake config files.
 
