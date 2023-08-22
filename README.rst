@@ -201,6 +201,98 @@ This CMake macro will add CppCheck to all targets with default arguments.
 
    cppcheck(ARGUMENTS ${DEFAULT_CPPCHECK_ARGS})
 
+CPack
+=====
+
+Configure Package Without Components
+------------------------------------
+Configure package for cpack which does not leverage components
+
+* One Value Args:
+   * VERSION        - The package version
+   * MAINTAINER     - The package maintainer
+   * VENDOR         - The package vender
+   * DESCRIPTION    - The package description
+   * LICENSE_FILE   - The package license file
+   * README_FILE    - The package readme
+   * PACKAGE_PREFIX - The package prefix applied to all cpack generated files
+* Multi Value Args:
+   * LINUX_DEPENDS     - The linux dependencies required via apt install
+   * WINDOWS_DEPENDS   - The windows dependencies required via nuget install
+
+.. code-block:: cmake
+
+   cpack(
+     VERSION ${pkg_extracted_version}
+     MAINTAINER <https://github.com/ros-industrial-consortium/tesseract>
+     DESCRIPTION ${pkg_extracted_description}
+     LICENSE_FILE ${CMAKE_CURRENT_LIST_DIR}/../LICENSE
+     README_FILE ${CMAKE_CURRENT_LIST_DIR}/../README.md
+     LINUX_DEPENDS
+       "libboost-system-dev"
+       "libboost-filesystem-dev"
+       "libboost-serialization-dev"
+       "libconsole-bridge-dev"
+       "libtinyxml2-dev"
+       "libeigen3-dev"
+       "libyaml-cpp-dev"
+     WINDOWS_DEPENDS
+       "boost_system"
+       "boost_filesystem;"
+       "boost_serialization"
+       "console-bridge"
+       "tinyxml2"
+       "Eigen3"
+       "yaml-cpp")
+
+Configure Package With Components
+---------------------------------
+This requires two macros one used in the components cmake file another for the top most package cmake file.
+
+Configure Component
+^^^^^^^^^^^^^^^^^^^
+Configure components for cpack
+
+* One Value Args:
+   * COMPONENT      - The component name
+   * VERSION        - The package version
+   * DESCRIPTION    - The package description
+   * PACKAGE_PREFIX - The package prefix applied to all cpack generated files
+* Multi Value Args:
+   * LINUX_DEPENDS     - The linux dependencies required via apt install
+   * WINDOWS_DEPENDS   - The windows dependencies required via nuget install
+   * COMPONENT_DEPENDS - The component dependencies required from this package
+
+.. code-block:: cmake
+
+   cpack_component(
+     COMPONENT IKFAST # must be uppercase
+     VERSION ${pkg_extracted_version}
+     DESCRIPTION "Tesseract Kinematics ikfast implementation"
+     COMPONENT_DEPENDS core)
+
+Configure Components Package
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Configure package leveraging components for cpack
+
+* One Value Args:
+   * VERSION        - The package version
+   * MAINTAINER     - The package maintainer
+   * VENDOR         - The package vender
+   * DESCRIPTION    - The package description
+   * LICENSE_FILE   - The package license file
+   * README_FILE    - The package readme
+   * PACKAGE_PREFIX - The package prefix applied to all cpack generated files
+
+.. code-block:: cmake
+
+   cpack_component_package(
+     VERSION ${pkg_extracted_version}
+     MAINTAINER <https://github.com/ros-industrial-consortium/tesseract>
+     DESCRIPTION ${pkg_extracted_description}
+     LICENSE_FILE ${CMAKE_CURRENT_LIST_DIR}/../LICENSE
+     README_FILE ${CMAKE_CURRENT_LIST_DIR}/../README.md)
+
 
 Configure (Pure CMake Package)
 ==============================
@@ -322,7 +414,13 @@ The following macros are used by configure_package and can be used independently
 
 Install Targets
 ^^^^^^^^^^^^^^^
-This will install along with export them to ${PROJECT_NAME}-targets
+This will install targets along associated with the provided component and export them to ${ARG_COMPONENT}-targets
+
+* One Value Args:
+   * COMPONENT (Optional) - The component name to associate the targets with, if not provided ${PROJECT_NAME} is used
+* Multi Value Args:
+   * TARGETS - The targets from the project to be installed
+
 
 .. code-block:: cmake
 
@@ -343,9 +441,9 @@ The default export name is ${PROJECT_NAME} but it can be overriden by providing 
 
 * Options:
    * EXPORT    - indicate if trargets should be exported
-   * COMPONENT - indicate if generating a package's component config
 * One Value Args:
-   * EXPORT_NAME (Optional) - the name given to the export ${ARG_EXPORT_NAME}-targets, if not provided PROJECT_NAME is used
+   * COMPONENT (Optional)   - the name given to the export ${ARG_COMPONENT}-targets, if not provided PROJECT_NAME is used
+   * CONFIG_NAME (Optional) - the name given to the export ${ARG_COMPONENT}-config.cmake, if not provided COMPONENT is used
    * NAMESPACE (Optional)   - the namespace assigned for exported targets
 * Multi Value Args:
    * DEPENDENCIES (Optional)         - list of dependencies to be loaded in the package config
@@ -355,9 +453,9 @@ The default export name is ${PROJECT_NAME} but it can be overriden by providing 
    * generate_package_config(EXPORT NAMSPACE namespace) Install export targets with provided namespace
    * generate_package_config(EXPORT) Install export targets with no namespace
    * generate_package_config() Install cmake config files and not install export targets
-   * It exports the provided targets under the provided namespace if EXPORT option is set
-   * It creates and install the ${EXPORT_NAME}-config.cmake
-   * In not component, it create and installs ${EXPORT_NAME}-config-version.cmake
+   * It exports the provided targets under the provided namespace ${ARG_COMPONENT}-targets, if EXPORT option is set
+   * It creates and install the ${ARG_CONFIG_NAME}-config.cmake
+   * In not component, it create and installs ${ARG_CONFIG_NAME}-config-version.cmake
 
 
 .. code-block:: cmake
@@ -372,11 +470,11 @@ The default export name is ${PROJECT_NAME} but it can be overriden by providing 
    generate_package_config() Install CMake config files and not install export targets
 
    # Install and export targets for package with components
-   generate_package_config(EXPORT SUPPORTED_COMPONENTS componentA componentB)
+   generate_package_config(EXPORT CONFIG_NAME ${PROJECT_NAME} SUPPORTED_COMPONENTS componentA componentB)
 
    # Install and export targets for component
-   generate_package_config(EXPORT COMPONENT
-     EXPORT_NAME kdl
+   generate_package_config(EXPORT
+     COMPONENT kdl
      NAMESPACE namespace
      DEPENDENCIES packageA packageB
      CFG_EXTRAS extraA.cmake extraB.cmake)

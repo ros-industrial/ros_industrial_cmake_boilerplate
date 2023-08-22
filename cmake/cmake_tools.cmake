@@ -193,32 +193,40 @@ endmacro()
 
 # Allows Colcon to find non-Ament packages when using workspace underlays
 macro(install_ament_hooks)
+  set(oneValueArgs COMPONENT)
+  cmake_parse_arguments(ARG "" "${oneValueArgs}" "" ${ARGN})
+
+  if (NOT ARG_COMPONENT)
+    set(ARG_COMPONENT ${PROJECT_NAME})
+  endif()
+
   # Allows Colcon to find non-Ament packages when using workspace underlays
   file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/share/ament_index/resource_index/packages/${PROJECT_NAME} "")
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/share/ament_index/resource_index/packages/${PROJECT_NAME} DESTINATION share/ament_index/resource_index/packages)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/share/ament_index/resource_index/packages/${PROJECT_NAME} DESTINATION share/ament_index/resource_index/packages COMPONENT ${ARG_COMPONENT})
   file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/share/${PROJECT_NAME}/hook/ament_prefix_path.dsv "prepend-non-duplicate;AMENT_PREFIX_PATH;")
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/share/${PROJECT_NAME}/hook/ament_prefix_path.dsv DESTINATION share/${PROJECT_NAME}/hook)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/share/${PROJECT_NAME}/hook/ament_prefix_path.dsv DESTINATION share/${PROJECT_NAME}/hook COMPONENT ${ARG_COMPONENT})
   file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/share/${PROJECT_NAME}/hook/ros_package_path.dsv "prepend-non-duplicate;ROS_PACKAGE_PATH;")
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/share/${PROJECT_NAME}/hook/ros_package_path.dsv DESTINATION share/${PROJECT_NAME}/hook)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/share/${PROJECT_NAME}/hook/ros_package_path.dsv DESTINATION share/${PROJECT_NAME}/hook COMPONENT ${ARG_COMPONENT})
   file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/share/${PROJECT_NAME}/hook/python_path.dsv "prepend-non-duplicate;PYTHONPATH;lib/python3/dist-packages")
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/share/${PROJECT_NAME}/hook/python_path.dsv DESTINATION share/${PROJECT_NAME}/hook)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/share/${PROJECT_NAME}/hook/python_path.dsv DESTINATION share/${PROJECT_NAME}/hook COMPONENT ${ARG_COMPONENT})
 endmacro()
 
-# Install the provided targets and export to ${PROJECT_NAME}-target, but this export name can be overrided by providing
+# Install the provided targets and export to ${ARG_COMPONENT}-target, but this export name can be overrided by providing
 # the export name with usage below.
 # Usage: install_targets(TARGETS targetA targetb)
-# Usage: install_targets(EXPORT_NAME example-targets TARGETS targetA targetb)
+# Usage: install_targets(COMPONENT example TARGETS targetA targetb)
 macro(install_targets)
-  set(oneValueArgs EXPORT_NAME)
+  set(oneValueArgs COMPONENT)
   set(multiValueArgs TARGETS)
   cmake_parse_arguments(ARG "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-  if (NOT ARG_EXPORT_NAME)
-    set(ARG_EXPORT_NAME ${PROJECT_NAME})
+  if (NOT ARG_COMPONENT)
+    set(ARG_COMPONENT ${PROJECT_NAME})
   endif()
 
   install(TARGETS ${ARG_TARGETS}
-          EXPORT ${ARG_EXPORT_NAME}-targets
+          EXPORT ${ARG_COMPONENT}-targets
+          COMPONENT ${ARG_COMPONENT}
           RUNTIME DESTINATION bin
           LIBRARY DESTINATION lib
           ARCHIVE DESTINATION lib)
@@ -226,20 +234,31 @@ endmacro()
 
 # Install the package.xml used for catkin and ament
 macro(install_pkgxml)
-  install(FILES package.xml DESTINATION share/${PROJECT_NAME})
+  set(oneValueArgs COMPONENT)
+  cmake_parse_arguments(ARG "" "${oneValueArgs}" "" ${ARGN})
+
+  if (NOT ARG_COMPONENT)
+    set(ARG_COMPONENT ${PROJECT_NAME})
+  endif()
+
+  install(FILES package.xml DESTINATION share/${PROJECT_NAME} COMPONENT ${ARG_COMPONENT})
 endmacro()
 
 # Create a default *-config.cmake.in with simple dependency finding
 function(make_default_package_config)
-    set(oneValueArgs CONFIG_FILE HAS_TARGETS COMPONENT)
+    set(oneValueArgs CONFIG_NAME CONFIG_FILE COMPONENT HAS_TARGETS )
     set(multiValueArgs DEPENDENCIES CFG_EXTRAS SUPPORTED_COMPONENTS)
     cmake_parse_arguments(ARG "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-    if (NOT ARG_EXPORT_NAME)
-      set(ARG_EXPORT_NAME ${PROJECT_NAME})
+    if (NOT ARG_COMPONENT)
+      set(ARG_COMPONENT ${PROJECT_NAME})
     endif()
 
-    if (NOT ARG_COMPONENT)
+    if (NOT ARG_CONFIG_NAME)
+      set(ARG_CONFIG_NAME ${ARG_COMPONENT})
+    endif()
+
+    if (ARG_CONFIG_NAME STREQUAL PROJECT_NAME)
       string(CONCAT ricb_pkgconfig
           "# Default *-config.cmake file created by ros-industrial-cmake-boilerplate\n\n"
           "@PACKAGE_INIT@\n\n"
@@ -264,17 +283,11 @@ function(make_default_package_config)
     endif()
 
     if (ARG_HAS_TARGETS)
-      if (NOT ARG_COMPONENT)
-        string(APPEND ricb_pkgconfig "\n# Targets\n"
-            "include(\"\${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@-targets.cmake\")\n")
-      else()
         string(APPEND ricb_pkgconfig "\n# Targets\n"
              "include(\"\${CMAKE_CURRENT_LIST_DIR}/${ARG_COMPONENT}-targets.cmake\")\n")
-      endif()
-
     endif()
 
-    if (NOT ARG_COMPONENT AND ARG_SUPPORTED_COMPONENTS)
+    if (ARG_SUPPORTED_COMPONENTS)
       string(REPLACE ";" " " supported_components_string "${ARG_SUPPORTED_COMPONENTS}")
       string(APPEND ricb_pkgconfig "\n# Components\n"
         "set(supported_components ${supported_components_string})\n"
@@ -312,10 +325,10 @@ endfunction()
 # Performs multiple operation so other packages may find a package and package components
 # The default export name is ${PROJECT_NAME} but it can be overriden by providing EXPORT_NAME
 # Options:
-#    * EXPORT    - indicate if trargets should be exported
-#    * COMPONENT - indicate if generating a package's component config
+#    * EXPORT - indicate if trargets should be exported
 # One Value Args:
-#    * EXPORT_NAME (Optional) - the name given to the export ${ARG_EXPORT_NAME}-targets, if not provided PROJECT_NAME is used
+#    * COMPONENT (Optional)   - the name given to the export ${ARG_COMPONENT}-targets, if not provided PROJECT_NAME is used
+#    * CONFIG_NAME (Optional) - the name given to the export ${ARG_COMPONENT}-config.cmake, if not provided COMPONENT is used
 #    * NAMESPACE (Optional)   - the namespace assigned for exported targets
 # Multi Value Args:
 #    * DEPENDENCIES (Optional)         - list of dependencies to be loaded in the package config
@@ -325,49 +338,47 @@ endfunction()
 #   * generate_package_config(EXPORT NAMSPACE namespace) Install export targets with provided namespace
 #   * generate_package_config(EXPORT) Install export targets with no namespace
 #   * generate_package_config() Install cmake config files and not install export targets
-#   * It exports the provided targets under the provided namespace if EXPORT option is set
-#   * It creates and install the ${EXPORT_NAME}-config.cmake
-#   * In not component, it create and installs ${EXPORT_NAME}-config-version.cmake
+#   * It exports the provided targets under the provided namespace ${ARG_COMPONENT}-targets, if EXPORT option is set
+#   * It creates and install the ${ARG_CONFIG_NAME}-config.cmake
+#   * In not component, it create and installs ${ARG_CONFIG_NAME}-config-version.cmake
 function(generate_package_config)
-  set(options EXPORT COMPONENT)
-  set(oneValueArgs EXPORT_NAME NAMESPACE)
+  set(options EXPORT)
+  set(oneValueArgs CONFIG_NAME COMPONENT NAMESPACE)
   set(multiValueArgs DEPENDENCIES CFG_EXTRAS SUPPORTED_COMPONENTS)
   cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-  if (NOT ARG_EXPORT_NAME)
-    set(ARG_EXPORT_NAME ${PROJECT_NAME})
+  if (NOT ARG_COMPONENT)
+    set(ARG_COMPONENT ${PROJECT_NAME})
+  endif()
+
+  if (NOT ARG_CONFIG_NAME)
+    set(ARG_CONFIG_NAME ${ARG_COMPONENT})
   endif()
 
   if (ARG_EXPORT)
     if (ARG_NAMESPACE)
-      install(EXPORT ${ARG_EXPORT_NAME}-targets NAMESPACE "${ARG_NAMESPACE}::" DESTINATION lib/cmake/${PROJECT_NAME})
+      install(EXPORT ${ARG_COMPONENT}-targets NAMESPACE "${ARG_NAMESPACE}::" DESTINATION lib/cmake/${PROJECT_NAME} COMPONENT ${ARG_COMPONENT})
     else()
-      install(EXPORT ${ARG_EXPORT_NAME}-targets DESTINATION lib/cmake/${PROJECT_NAME})
+      install(EXPORT ${ARG_COMPONENT}-targets DESTINATION lib/cmake/${PROJECT_NAME} COMPONENT ${ARG_COMPONENT})
     endif()
   endif()
 
-  set(config_template "${CMAKE_CURRENT_LIST_DIR}/cmake/${ARG_EXPORT_NAME}-config.cmake.in")
+  set(config_template "${CMAKE_CURRENT_LIST_DIR}/cmake/${ARG_CONFIG_NAME}-config.cmake.in")
   if (NOT EXISTS ${config_template})
     message(STATUS "No package config template file found, creating default one")
-    set(config_template "${CMAKE_BINARY_DIR}/${ARG_EXPORT_NAME}-config.cmake.in")
-    if (ARG_COMPONENT)
-      make_default_package_config(
-        CONFIG_FILE ${config_template}
-        COMPONENT ${ARG_EXPORT_NAME}
-        HAS_TARGETS ${ARG_EXPORT}
-        DEPENDENCIES ${ARG_DEPENDENCIES}
-        CFG_EXTRAS ${ARG_CFG_EXTRAS})
-    else()
-      make_default_package_config(
-        CONFIG_FILE ${config_template}
-        SUPPORTED_COMPONENTS ${ARG_SUPPORTED_COMPONENTS}
-        HAS_TARGETS ${ARG_EXPORT}
-        DEPENDENCIES ${ARG_DEPENDENCIES}
-        CFG_EXTRAS ${ARG_CFG_EXTRAS})
-    endif()
+    set(config_template "${CMAKE_BINARY_DIR}/${ARG_CONFIG_NAME}-config.cmake.in")
+
+    make_default_package_config(
+      CONFIG_NAME ${ARG_CONFIG_NAME}
+      CONFIG_FILE ${config_template}
+      COMPONENT ${ARG_COMPONENT}
+      SUPPORTED_COMPONENTS ${ARG_SUPPORTED_COMPONENTS}
+      HAS_TARGETS ${ARG_EXPORT}
+      DEPENDENCIES ${ARG_DEPENDENCIES}
+      CFG_EXTRAS ${ARG_CFG_EXTRAS})
 
     foreach(extra_config IN LISTS ARG_CFG_EXTRAS)
-      install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/${extra_config} DESTINATION lib/cmake/${PROJECT_NAME}/)
+      install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/${extra_config} DESTINATION lib/cmake/${PROJECT_NAME}/ COMPONENT ${ARG_COMPONENT})
     endforeach()
 
   else ()
@@ -387,28 +398,30 @@ function(generate_package_config)
   # Create cmake config files
   include(CMakePackageConfigHelpers)
   configure_package_config_file(${config_template}
-    ${CMAKE_BINARY_DIR}/${ARG_EXPORT_NAME}-config.cmake
+    ${CMAKE_BINARY_DIR}/${ARG_CONFIG_NAME}-config.cmake
     INSTALL_DESTINATION lib/cmake/${PROJECT_NAME}
     NO_CHECK_REQUIRED_COMPONENTS_MACRO)
 
   install(FILES
-    "${CMAKE_BINARY_DIR}/${ARG_EXPORT_NAME}-config.cmake"
-    DESTINATION lib/cmake/${PROJECT_NAME})
+    "${CMAKE_BINARY_DIR}/${ARG_CONFIG_NAME}-config.cmake"
+    DESTINATION lib/cmake/${PROJECT_NAME}
+    COMPONENT ${ARG_COMPONENT})
 
-  if (NOT ARG_COMPONENT)
-    write_basic_package_version_file(${CMAKE_BINARY_DIR}/${ARG_EXPORT_NAME}-config-version.cmake
+  if (ARG_CONFIG_NAME STREQUAL PROJECT_NAME)
+    write_basic_package_version_file(${CMAKE_BINARY_DIR}/${ARG_CONFIG_NAME}-config-version.cmake
       VERSION ${PROJECT_VERSION} COMPATIBILITY ExactVersion)
 
     install(FILES
-      "${CMAKE_BINARY_DIR}/${ARG_EXPORT_NAME}-config-version.cmake"
-      DESTINATION lib/cmake/${PROJECT_NAME})
+      "${CMAKE_BINARY_DIR}/${ARG_CONFIG_NAME}-config-version.cmake"
+      DESTINATION lib/cmake/${PROJECT_NAME}
+      COMPONENT ${ARG_COMPONENT})
   endif()
 
   if (ARG_EXPORT)
     if (ARG_NAMESPACE)
-      export(EXPORT ${ARG_EXPORT_NAME}-targets NAMESPACE "${ARG_NAMESPACE}::" FILE ${CMAKE_BINARY_DIR}/${ARG_EXPORT_NAME}-targets.cmake)
+      export(EXPORT ${ARG_COMPONENT}-targets NAMESPACE "${ARG_NAMESPACE}::" FILE ${CMAKE_BINARY_DIR}/${ARG_COMPONENT}-targets.cmake)
     else()
-      export(EXPORT ${ARG_EXPORT_NAME}-targets FILE ${CMAKE_BINARY_DIR}/${ARG_EXPORT_NAME}-targets.cmake)
+      export(EXPORT ${ARG_COMPONENT}-targets FILE ${CMAKE_BINARY_DIR}/${ARG_COMPONENT}-targets.cmake)
     endif()
   endif()
 endfunction()
@@ -417,46 +430,57 @@ endfunction()
 # If Namespace is provided but no targets it is assumed targets were installed and must be exported
 # One Value Args:
 #   * NAMESPACE - This will prepend <namespace>:: to the target names as they are written to the import file
+#   * COMPONENT - The component to associate with package related files like package.xml, *-config.cmake, etc.. If not provided the PROJECT_NAME is used.
 # Multi Value Args:
-#   * TARGETS      - The targets from the project to be installed
-#   * COMPONENTS   - The packages supported find_package components if any
-#   * DEPENDENCIES - The dependencies to be written to the packages Config.cmake file
-#   * CFG_EXTRAS   - The extra cmake files to be include in the packages Config.cmake file
+#   * TARGETS                - The targets from the project to be installed
+#   * SUPPORTED_COMPONENTS   - The packages supported find_package components if any
+#   * DEPENDENCIES           - The dependencies to be written to the packages Config.cmake file
+#   * CFG_EXTRAS             - The extra cmake files to be include in the packages Config.cmake file
 # Usage: configure_package(NAMSPACE namespace TARGETS targetA targetb COMPONENTS componentA componentB DEPENDENCIES Eigen3 "Boost COMPONENTS system filesystem" CFG_EXTRAS target-extras.cmake)
 #   * It installs the provided targets
 #   * It exports the provided targets under the provided namespace
 #   * It installs the package.xml file
 #   * It create and install the ${PROJECT_NAME}-config.cmake and ${PROJECT_NAME}-config-version.cmake
 macro(configure_package)
-  set(oneValueArgs NAMESPACE)
-  set(multiValueArgs TARGETS DEPENDENCIES CFG_EXTRAS COMPONENTS)
+  set(oneValueArgs NAMESPACE COMPONENT)
+  set(multiValueArgs TARGETS DEPENDENCIES CFG_EXTRAS SUPPORTED_COMPONENTS)
   cmake_parse_arguments(ARG "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
+  if (NOT ARG_COMPONENT)
+    set(ARG_COMPONENT ${PROJECT_NAME})
+  endif()
+
   # install package.xml
-  install_pkgxml()
+  install_pkgxml(COMPONENT ${ARG_COMPONENT})
 
   # install and export targets if provided and generate package config
   if (ARG_TARGETS)
-    install_targets(TARGETS ${ARG_TARGETS})
+    install_targets(COMPONENT ${ARG_COMPONENT} TARGETS ${ARG_TARGETS})
     generate_package_config(EXPORT
-      SUPPORTED_COMPONENTS ${ARG_COMPONENTS}
+      CONFIG_NAME ${PROJECT_NAME}
+      COMPONENT ${ARG_COMPONENT}
+      SUPPORTED_COMPONENTS ${ARG_SUPPORTED_COMPONENTS}
       NAMESPACE ${ARG_NAMESPACE}
       DEPENDENCIES ${ARG_DEPENDENCIES}
       CFG_EXTRAS ${ARG_CFG_EXTRAS})
   elseif(ARG_NAMESPACE)
     generate_package_config(EXPORT
-      SUPPORTED_COMPONENTS ${ARG_COMPONENTS}
+      CONFIG_NAME ${PROJECT_NAME}
+      COMPONENT ${ARG_COMPONENT}
+      SUPPORTED_COMPONENTS ${ARG_SUPPORTED_COMPONENTS}
       NAMESPACE ${ARG_NAMESPACE}
       DEPENDENCIES ${ARG_DEPENDENCIES}
       CFG_EXTRAS ${ARG_CFG_EXTRAS})
   else()
     generate_package_config(
-      SUPPORTED_COMPONENTS ${ARG_COMPONENTS}
+      CONFIG_NAME ${PROJECT_NAME}
+      COMPONENT ${ARG_COMPONENT}
+      SUPPORTED_COMPONENTS ${ARG_SUPPORTED_COMPONENTS}
       DEPENDENCIES ${ARG_DEPENDENCIES}
       CFG_EXTRAS ${ARG_CFG_EXTRAS})
   endif()
 
-  install_ament_hooks()
+  install_ament_hooks(COMPONENT ${ARG_COMPONENT})
 endmacro()
 
 # Performs multiple operation so other packages may find a package's component
@@ -482,21 +506,21 @@ macro(configure_component)
 
   # install and export targets if provided and generate package config
   if (ARG_TARGETS)
-    install_targets(EXPORT_NAME ${ARG_COMPONENT} TARGETS ${ARG_TARGETS})
-    generate_package_config(EXPORT COMPONENT
-      EXPORT_NAME ${ARG_COMPONENT}
+    install_targets(COMPONENT ${ARG_COMPONENT} TARGETS ${ARG_TARGETS})
+    generate_package_config(EXPORT
+      COMPONENT ${ARG_COMPONENT}
       NAMESPACE ${ARG_NAMESPACE}
       DEPENDENCIES ${ARG_DEPENDENCIES}
       CFG_EXTRAS ${ARG_CFG_EXTRAS})
   elseif(ARG_NAMESPACE)
-    generate_package_config(EXPORT COMPONENT
-      EXPORT_NAME ${ARG_COMPONENT}
+    generate_package_config(EXPORT
+      COMPONENT ${ARG_COMPONENT}
       NAMESPACE ${ARG_NAMESPACE}
       DEPENDENCIES ${ARG_DEPENDENCIES}
       CFG_EXTRAS ${ARG_CFG_EXTRAS})
   else()
-    generate_package_config(COMPONENT
-      EXPORT_NAME ${ARG_COMPONENT}
+    generate_package_config(
+      COMPONENT ${ARG_COMPONENT}
       DEPENDENCIES ${ARG_DEPENDENCIES}
       CFG_EXTRAS ${ARG_CFG_EXTRAS})
   endif()
@@ -663,6 +687,18 @@ else()
   set(CMAKE_CXX_CPPCHECK "" CACHE STRING "" FORCE) # delete it
 endif()
 
+# Configure package for cpack which does not leverage components
+# One Value Args:
+#   * VERSION        - The package version
+#   * MAINTAINER     - The package maintainer
+#   * VENDOR         - The package vender
+#   * DESCRIPTION    - The package description
+#   * LICENSE_FILE   - The package license file
+#   * README_FILE    - The package readme
+#   * PACKAGE_PREFIX - The package prefix applied to all cpack generated files
+# Multi Value Args:
+#   * LINUX_DEPENDS     - The linux dependencies required via apt install
+#   * WINDOWS_DEPENDS   - The windows dependencies required via nuget install
 macro(cpack)
   set(oneValueArgs
       VERSION
@@ -705,7 +741,7 @@ macro(cpack)
     set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS=ON)
     string(
       REPLACE ";"
-              ","
+              ", "
               CPACK_DEBIAN_PACKAGE_DEPENDS
               "${ARG_LINUX_DEPENDS}")
   elseif(WIN32)
@@ -717,9 +753,140 @@ macro(cpack)
     set(CPACK_NUGET_PACKAGE_DESCRIPTION ${ARG_DESCRIPTION})
     string(
       REPLACE ";"
-              ","
+              ", "
               CPACK_NUGET_PACKAGE_DEPENDENCIES
               "${ARG_WINDOWS_DEPENDS}")
   endif()
   include(CPack)
+endmacro()
+
+# Configure package leveraging components for cpack
+# One Value Args:
+#   * VERSION        - The package version
+#   * MAINTAINER     - The package maintainer
+#   * VENDOR         - The package vender
+#   * DESCRIPTION    - The package description
+#   * LICENSE_FILE   - The package license file
+#   * README_FILE    - The package readme
+#   * PACKAGE_PREFIX - The package prefix applied to all cpack generated files
+macro(cpack_component_package)
+  set(oneValueArgs
+      VERSION
+      MAINTAINER
+      VENDOR
+      DESCRIPTION
+      LICENSE_FILE
+      README_FILE
+      PACKAGE_PREFIX)
+  cmake_parse_arguments(
+    ARG
+    ""
+    "${oneValueArgs}"
+    ""
+    ${ARGN})
+
+  set(CPACK_PACKAGE_VENDOR ${ARG_VENDOR})
+  set(CPACK_RESOURCE_FILE_LICENSE ${ARG_LICENSE_FILE})
+  set(CPACK_RESOURCE_FILE_README ${ARG_README_FILE})
+
+  string(
+    REPLACE "_"
+            "-"
+            PACKAGE_NAME
+            ${PROJECT_NAME})
+
+  string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
+
+  if(UNIX)
+    set(CPACK_GENERATOR "DEB;TXZ")
+
+    if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+      set(DEB_ARCH "amd64")
+    else()
+      set(DEB_ARCH ${CMAKE_SYSTEM_PROCESSOR})
+    endif()
+
+    set(CPACK_DEB_COMPONENT_INSTALL ON)
+    set(CPACK_DEBIAN_ENABLE_COMPONENT_DEPENDS ON)
+    set(CPACK_DEBIAN_PACKAGE_MAINTAINER ${ARG_MAINTAINER})
+    set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS=ON)
+
+    set(CPACK_DEBIAN_${PROJECT_NAME_UPPER}_PACKAGE_NAME "${ARG_PACKAGE_PREFIX}${PACKAGE_NAME}")
+    set(CPACK_DEBIAN_${PROJECT_NAME_UPPER}_FILE_NAME "${ARG_PACKAGE_PREFIX}${PACKAGE_NAME}_${DEB_ARCH}_linux_${ARG_VERSION}.deb")
+    set(CPACK_DEBIAN_${PROJECT_NAME_UPPER}_PACKAGE_SHLIBDEPS=ON)
+    set(CPACK_DEBIAN_${PROJECT_NAME_UPPER}_PACKAGE_ARCHITECTURE ${DEB_ARCH})
+    set(CPACK_DEBIAN_${PROJECT_NAME_UPPER}_DESCRIPTION ${ARG_DESCRIPTION})
+  elseif(WIN32)
+    set(CPACK_NUGET_COMPONENT_INSTALL ON)
+    set(CPACK_GENERATOR "NuGet;TXZ")
+    set(CPACK_NUGET_${PROJECT_NAME_UPPER}_PACKAGE_NAME "${ARG_PACKAGE_PREFIX}${PACKAGE_NAME}")
+    set(CPACK_NUGET_${PROJECT_NAME_UPPER}_FILE_NAME "${ARG_PACKAGE_PREFIX}${PACKAGE_NAME}_${CMAKE_SYSTEM_PROCESSOR}_windows_${ARG_VERSION}.nupkg")
+  endif()
+
+  include(CPack)
+endmacro()
+
+# Configure components for cpack
+# One Value Args:
+#   * COMPONENT      - The component name
+#   * VERSION        - The package version
+#   * DESCRIPTION    - The package description
+#   * PACKAGE_PREFIX - The package prefix applied to all cpack generated files
+# Multi Value Args:
+#   * LINUX_DEPENDS     - The linux dependencies required via apt install
+#   * WINDOWS_DEPENDS   - The windows dependencies required via nuget install
+#   * COMPONENT_DEPENDS - The component dependencies required from this package
+macro(cpack_component)
+  set(oneValueArgs COMPONENT VERSION DESCRIPTION PACKAGE_PREFIX)
+  set(multiValueArgs LINUX_DEPENDS WINDOWS_DEPENDS COMPONENT_DEPENDS)
+  cmake_parse_arguments(
+    ARG
+    ""
+    "${oneValueArgs}"
+    "${multiValueArgs}"
+    ${ARGN})
+
+  string(
+    REPLACE "_"
+            "-"
+            PACKAGE_NAME
+            ${PROJECT_NAME})
+
+  string(TOUPPER ${ARG_COMPONENT} COMPONENT_UPPER)
+  string(TOLOWER ${ARG_COMPONENT} COMPONENT_LOWER)
+
+  if(UNIX)
+    if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+      set(DEB_ARCH "amd64")
+    else()
+      set(DEB_ARCH ${CMAKE_SYSTEM_PROCESSOR})
+    endif()
+
+    string(
+      REPLACE ";"
+              ", "
+              PACKAGE_DEPENDS
+              "${ARG_LINUX_DEPENDS}")
+
+    set(CPACK_DEBIAN_${COMPONENT_UPPER}_PACKAGE_NAME "${ARG_PACKAGE_PREFIX}${PACKAGE_NAME}-${COMPONENT_LOWER}" PARENT_SCOPE)
+    set(CPACK_DEBIAN_${COMPONENT_UPPER}_FILE_NAME "${ARG_PACKAGE_PREFIX}${PACKAGE_NAME}-${COMPONENT_LOWER}_${DEB_ARCH}_linux_${ARG_VERSION}.deb" PARENT_SCOPE)
+    set(CPACK_DEBIAN_${COMPONENT_UPPER}_PACKAGE_SHLIBDEPS=ON PARENT_SCOPE)
+    set(CPACK_DEBIAN_${COMPONENT_UPPER}_PACKAGE_ARCHITECTURE ${DEB_ARCH} PARENT_SCOPE)
+    set(CPACK_DEBIAN_${COMPONENT_UPPER}_DESCRIPTION ${ARG_DESCRIPTION} PARENT_SCOPE)
+    set(CPACK_DEBIAN_${COMPONENT_UPPER}_PACKAGE_DEPENDS ${PACKAGE_DEPENDS} PARENT_SCOPE)
+  elseif(WIN32)
+    string(
+      REPLACE ";"
+              ", "
+              PACKAGE_DEPENDS
+              "${ARG_WINDOWS_DEPENDS}")
+
+    set(CPACK_NUGET_${COMPONENT_UPPER}_PACKAGE_NAME "${ARG_PACKAGE_PREFIX}${PACKAGE_NAME}-${COMPONENT_LOWER}" PARENT_SCOPE)
+    set(CPACK_NUGET_${COMPONENT_UPPER}_FILE_NAME "${ARG_PACKAGE_PREFIX}${PACKAGE_NAME}-${COMPONENT_LOWER}_${CMAKE_SYSTEM_PROCESSOR}_windows_${ARG_VERSION}.nupkg" PARENT_SCOPE)
+    set(CPACK_NUGET_${COMPONENT_UPPER}_DESCRIPTION ${ARG_DESCRIPTION} PARENT_SCOPE)
+    set(CPACK_NUGET_${COMPONENT_UPPER}_PACKAGE_DEPENDENCIES ${PACKAGE_DEPENDS} PARENT_SCOPE)
+  endif()
+
+  set(CPACK_COMPONENT_${COMPONENT_UPPER}_DEPENDS ${ARG_COMPONENT_DEPENDS} PARENT_SCOPE)
+
 endmacro()
