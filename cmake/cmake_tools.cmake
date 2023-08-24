@@ -769,6 +769,8 @@ endmacro()
 #   * LICENSE_FILE   - The package license file
 #   * README_FILE    - The package readme
 #   * PACKAGE_PREFIX - The package prefix applied to all cpack generated files
+# Multi Value Args:
+#   * COMPONENT_DEPENDS - The component dependencies required from this package
 macro(cpack_component_package)
   set(oneValueArgs
       VERSION
@@ -778,12 +780,11 @@ macro(cpack_component_package)
       LICENSE_FILE
       README_FILE
       PACKAGE_PREFIX)
-  cmake_parse_arguments(
-    ARG
-    ""
-    "${oneValueArgs}"
-    ""
-    ${ARGN})
+  set(multiValueArgs COMPONENT_DEPENDS)
+  cmake_parse_arguments(ARG "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/share/${PROJECT_NAME}/cpack_metapackage "")
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/share/${PROJECT_NAME}/cpack_metapackage DESTINATION share/${PROJECT_NAME}/ COMPONENT ${PROJECT_NAME})
 
   set(CPACK_PACKAGE_VENDOR ${ARG_VENDOR})
   set(CPACK_RESOURCE_FILE_LICENSE ${ARG_LICENSE_FILE})
@@ -822,6 +823,8 @@ macro(cpack_component_package)
     set(CPACK_NUGET_${PROJECT_NAME_UPPER}_PACKAGE_NAME "${ARG_PACKAGE_PREFIX}${PACKAGE_NAME}")
     set(CPACK_NUGET_${PROJECT_NAME_UPPER}_FILE_NAME "${ARG_PACKAGE_PREFIX}${PACKAGE_NAME}_${CMAKE_SYSTEM_PROCESSOR}_windows_${ARG_VERSION}.nupkg")
   endif()
+
+  set(CPACK_COMPONENT_${PROJECT_NAME_UPPER}_DEPENDS ${ARG_COMPONENT_DEPENDS})
 
   include(CPack)
 endmacro()
