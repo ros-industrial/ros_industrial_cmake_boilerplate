@@ -514,7 +514,6 @@ macro(cpack_debian_source_package)
       "*~$")
 
     set(package_file_name "${CPACK_DEBIAN_PACKAGE_NAME}_${DEBIAN_PACKAGE_VERSION}")
-#    set(package_file_name "${CPACK_DEBIAN_PACKAGE_NAME}_${CPACK_PACKAGE_VERSION}")
 
     file(WRITE "${CMAKE_BINARY_DIR}/Debian/${DISTRI}/cpack.cmake"
       "set(CPACK_GENERATOR TGZ)\n"
