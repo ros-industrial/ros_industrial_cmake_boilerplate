@@ -30,14 +30,14 @@ set(RICB_CPACK_TOOLS_DIR ${CMAKE_CURRENT_LIST_DIR})
 
 # Configure package for cpack which does not leverage components
 # One Value Args:
-#   * VERSION        - The package version
-#   * MAINTAINER_NAME  - The package maintainer
-#   * MAINTAINER_EMAIL - The package maintainer
-#   * VENDOR         - The package vender
-#   * DESCRIPTION    - The package description
-#   * LICENSE_FILE   - The package license file
-#   * README_FILE    - The package readme
-#   * PACKAGE_PREFIX - The package prefix applied to all cpack generated files
+#   * VERSION          - The package version
+#   * MAINTAINER_NAME  - The package maintainer name
+#   * MAINTAINER_EMAIL - The package maintainer email
+#   * VENDOR           - The package vender
+#   * DESCRIPTION      - The package description
+#   * LICENSE_FILE     - The package license file
+#   * README_FILE      - The package readme
+#   * PACKAGE_PREFIX   - The package prefix applied to all cpack generated files
 # Multi Value Args:
 #   * LINUX_DEPENDS     - The linux dependencies required via apt install
 #   * WINDOWS_DEPENDS   - The windows dependencies required via nuget install
@@ -88,6 +88,10 @@ macro(cpack)
     set(CPACK_DEBIAN_PACKAGE_MAINTAINER "${CPACK_DEBIAN_PACKAGE_MAINTAINER_NAME} <${CPACK_DEBIAN_PACKAGE_MAINTAINER_EMAIL}>")
     set(CPACK_DEBIAN_PACKAGE_DESCRIPTION ${ARG_DESCRIPTION})
     set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS=ON)
+
+    SET(CPACK_DEBIAN_PACKAGE_SECTION "devel")
+    SET(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
+
     string(
       REPLACE ";"
               ", "
@@ -112,8 +116,8 @@ endmacro()
 # Configure package leveraging components for cpack
 # One Value Args:
 #   * VERSION          - The package version
-#   * MAINTAINER_NAME  - The package maintainer
-#   * MAINTAINER_EMAIL - The package maintainer
+#   * MAINTAINER_NAME  - The package maintainer name
+#   * MAINTAINER_EMAIL - The package maintainer email
 #   * VENDOR           - The package vender
 #   * DESCRIPTION      - The package description
 #   * LICENSE_FILE     - The package license file
@@ -261,7 +265,7 @@ endmacro()
 #   * CHANGLELOG (Required)         - The file path to the package CHANGELOG.rst
 #   * PACKAGE_PREFIX (Optional)     - The package prefix applied to all cpack generated files
 #   * UPLOAD (Optional)             - Indicate if it should be uploaded to ppa
-#   * PPA_DEBIAN_VERSION            - The debian version to be used
+#   * DEBIAN_INCREMENT              - The debian increment to be used, default is zero
 #   * DPUT_HOST (Optional/Required) - The ppa to upload to. Only required if UPLOAD is enabled
 #   * DPUT_CONFIG_IN (Optional)     - The dput config.in file. If not provide one is created.
 # Multi Value Args:
@@ -290,7 +294,7 @@ endmacro()
 #    * CPACK_DEBIAN_<COMPONENT>_DESCRIPTION (Reqired if components exist and enabled)
 #
 macro(cpack_debian_source_package)
-  set(oneValueArgs PACKAGE_PREFIX CHANGLELOG UPLOAD PPA_DEBIAN_VERSION DPUT_HOST DPUT_CONFIG_IN)
+  set(oneValueArgs PACKAGE_PREFIX CHANGLELOG UPLOAD DEBIAN_INCREMENT DPUT_HOST DPUT_CONFIG_IN)
   set(multiValueArgs DISTRIBUTIONS)
   cmake_parse_arguments(
     ARG
@@ -329,13 +333,14 @@ macro(cpack_debian_source_package)
       endif()
     endif()
 
-    if(ARG_PPA_DEBIAN_VERSION)
-      set(DEBIAN_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION}-${ARG_PPA_DEBIAN_VERSION}~${DISTRI}1")
-    elseif(NOT ARG_PPA_DEBIAN_VERSION AND NOT ARG_DISTRIBUTIONS)
+    if(NOT ARG_DEBIAN_INCREMENT AND NOT ARG_DISTRIBUTIONS)
       message(WARNING "Variable PPA_DEBIAN_VERSION not set! Building 'native' package!")
       set(DEBIAN_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION}")
     else()
-      set(DEBIAN_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION}-0~${DISTRI}1")
+      if(NOT ARG_DEBIAN_INCREMENT)
+        set(ARG_DEBIAN_INCREMENT 0)
+      endif()
+      set(DEBIAN_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION}-${ARG_DEBIAN_INCREMENT}${DISTRI}")
     endif()
 
     message(STATUS "Debian version: ${DEBIAN_PACKAGE_VERSION}")
@@ -350,7 +355,6 @@ macro(cpack_debian_source_package)
     list(REMOVE_DUPLICATES CPACK_DEBIAN_PACKAGE_BUILD_DEPENDS)
     list(SORT CPACK_DEBIAN_PACKAGE_BUILD_DEPENDS)
     string(REPLACE ";" ", " build_depends "${CPACK_DEBIAN_PACKAGE_BUILD_DEPENDS}")
-    string(REPLACE ";" ", " bin_depends "${CPACK_DEBIAN_PACKAGE_DEPENDS}")
     file(WRITE ${debian_control}
       "Source: ${CPACK_DEBIAN_PACKAGE_NAME}\n"
       "Section: ${CPACK_DEBIAN_PACKAGE_SECTION}\n"
@@ -362,11 +366,17 @@ macro(cpack_debian_source_package)
     )
 
     if(NOT CPACK_COMPONENTS_ALL)
+      string(REPLACE ";" ", " bin_depends "${CPACK_DEBIAN_PACKAGE_DEPENDS}")
+      if(bin_depends)
+        set(DEPENDS "${bin_depends}, \${shlibs:Depends}, \${misc:Depends}")
+      else()
+        set(DEPENDS "\${shlibs:Depends}, \${misc:Depends}")
+      endif()
       file(APPEND ${debian_control}
         "\n"
         "Package: ${CPACK_DEBIAN_PACKAGE_NAME}\n"
         "Architecture: ${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}\n"
-        "Depends: ${bin_depends}, \${shlibs:Depends}, \${misc:Depends}\n"
+        "Depends: ${DEPENDS}\n"
         "Description: ${CPACK_DEBIAN_PACKAGE_DESCRIPTION}\n"
         "${deb_long_description}"
       )
@@ -380,8 +390,7 @@ macro(cpack_debian_source_package)
         "Depends: ${CPACK_DEBIAN_PACKAGE_NAME} (= \${binary:Version}), \${shlibs:Depends}, \${misc:Depends}\n"
         "Description: ${CPACK_DEBIAN_PACKAGE_DESCRIPTION}\n"
         "${deb_long_description}"
-        "\n .\n"
-        " This is the debugging symbols for the ${CPACK_DEBIAN_PACKAGE_NAME} library"
+        "\n"
       )
     endif()
 
@@ -400,7 +409,11 @@ macro(cpack_debian_source_package)
         set(COMPONENT_PACKAGE_NAME ${CPACK_DEBIAN_PACKAGE_NAME})
       else()
         set(COMPONENT_PACKAGE_NAME ${CPACK_DEBIAN_PACKAGE_NAME}-${COMPONENT})
-        set(DEPENDS "${DEPENDS}, \${shlibs:Depends}, \${misc:Depends}")
+        if(DEPENDS)
+          set(DEPENDS "${DEPENDS}, \${shlibs:Depends}, \${misc:Depends}")
+        else()
+          set(DEPENDS "\${shlibs:Depends}, \${misc:Depends}")
+        endif()
       endif()
 
       file(APPEND ${debian_control} "\n"
@@ -459,6 +472,7 @@ macro(cpack_debian_source_package)
           "${CPACK_DEBIAN_PACKAGE_MAINTAINER_NAME}"
           "${CPACK_DEBIAN_PACKAGE_MAINTAINER_EMAIL}"
           "${DISTRI}"
+          "${ARG_DEBIAN_INCREMENT}"
           "${ARG_CHANGLELOG}"
           -o
           "${debian_changelog}"
@@ -506,6 +520,7 @@ macro(cpack_debian_source_package)
       "/Testing/"
       "/test/"
       "/tmp/"
+      "/ci/"
       "/packaging/"
       "/debian/"
       "/\\\\.git.*"

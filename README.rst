@@ -209,13 +209,14 @@ Configure Package Without Components
 Configure package for cpack which does not leverage components
 
 * One Value Args:
-   * VERSION        - The package version
-   * MAINTAINER     - The package maintainer
-   * VENDOR         - The package vender
-   * DESCRIPTION    - The package description
-   * LICENSE_FILE   - The package license file
-   * README_FILE    - The package readme
-   * PACKAGE_PREFIX - The package prefix applied to all cpack generated files
+   * VERSION          - The package version
+   * MAINTAINER_NAME  - The package maintainer name
+   * MAINTAINER_EMAIL - The package maintainer email
+   * VENDOR           - The package vender
+   * DESCRIPTION      - The package description
+   * LICENSE_FILE     - The package license file
+   * README_FILE      - The package readme
+   * PACKAGE_PREFIX   - The package prefix applied to all cpack generated files
 * Multi Value Args:
    * LINUX_DEPENDS     - The linux dependencies required via apt install
    * WINDOWS_DEPENDS   - The windows dependencies required via nuget install
@@ -276,13 +277,14 @@ Configure Components Package
 Configure package leveraging components for cpack
 
 * One Value Args:
-   * VERSION        - The package version
-   * MAINTAINER     - The package maintainer
-   * VENDOR         - The package vender
-   * DESCRIPTION    - The package description
-   * LICENSE_FILE   - The package license file
-   * README_FILE    - The package readme
-   * PACKAGE_PREFIX - The package prefix applied to all cpack generated files
+   * VERSION          - The package version
+   * MAINTAINER_NAME  - The package maintainer name
+   * MAINTAINER_EMAIL - The package maintainer email
+   * VENDOR           - The package vender
+   * DESCRIPTION      - The package description
+   * LICENSE_FILE     - The package license file
+   * README_FILE      - The package readme
+   * PACKAGE_PREFIX   - The package prefix applied to all cpack generated files
 
 .. code-block:: cmake
 

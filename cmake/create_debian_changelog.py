@@ -94,6 +94,7 @@ def save_changelog(package_name,
                    package_maintainer_name,
                    package_maintainer_email,
                    package_distribution,
+                   package_debian_increment,
                    package_changelog_path,
                    output_path):
     changelogs = get_changelogs(package_name,
@@ -137,10 +138,9 @@ def save_changelog(package_name,
         sys.exit("This is almost certainly by mistake, you should really take a\nlook at the changelogs for the package '{0}' you are releasing '{1}'.".format(package_name, package_version))
 
     native = False
-    debian_inc = 0
     data = {}
     # Debian Increment Number
-    data['DebianInc'] = '' if native else '-{0}'.format(debian_inc)
+    data['DebianInc'] = '' if native else '-{0}'.format(package_debian_increment)
     # Package name
     data['Package'] = package_name
     # Package changelogs
@@ -149,8 +149,8 @@ def save_changelog(package_name,
     data['Distribution'] = package_distribution
 
     template = ("@[for change_version, change_date, changelog, main_name, main_email in changelogs]@(Package) (@("
-                "change_version)@(DebianInc)~@(Distribution)1) @(Distribution); urgency=high\n\n@(changelog)\n\n -- @("
-                "main_name) <@(main_email)> @(change_date)\n\n@[end for]\n")
+                "change_version)@(DebianInc)@(Distribution)) @(Distribution); urgency=high\n\n@(changelog)\n\n -- @("
+                "main_name) <@(main_email)>  @(change_date)\n\n@[end for]\n")
 
     # Expand template
     result = em.expand(template, **data)
@@ -173,6 +173,7 @@ if __name__ == '__main__':
     parser.add_argument('maintainer_name', nargs=1, help='The package maintainer name', type=str)
     parser.add_argument('maintainer_email', nargs=1, help='The package maintainer email', type=str)
     parser.add_argument('distribution', nargs=1, help='The package distribution', type=str)
+    parser.add_argument('debian_increment', nargs=1, help='The debian increment', type=str)
     parser.add_argument('changelog_path', nargs=1, help='CHANGELOG.rst file path', type=str)
     parser.add_argument('-o', '--output', help='Debian changelog output file path', default=sys.stdout,
                         type=argparse.FileType('w'))
@@ -182,5 +183,6 @@ if __name__ == '__main__':
                    arguments.maintainer_name[0],
                    arguments.maintainer_email[0],
                    arguments.distribution[0],
+                   arguments.debian_increment[0],
                    arguments.changelog_path[0],
                    arguments.output)
