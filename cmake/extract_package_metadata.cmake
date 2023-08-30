@@ -57,4 +57,12 @@ macro(extract_package_metadata prefix)
     string(STRIP "${CMAKE_MATCH_1}" CMAKE_MATCH_1)
     set(${prefix}_extracted_description "${CMAKE_MATCH_1}")
   endif()
+
+  # Extract project maintainer.
+  if(NOT package_xml_str MATCHES "<maintainer email=\"(.*)\">(.*)</maintainer>")
+    message(FATAL_ERROR "Could not parse project version from package manifest (aborting)")
+  else()
+    set(${prefix}_extracted_maintainer_email ${CMAKE_MATCH_1})
+    set(${prefix}_extracted_maintainer_name ${CMAKE_MATCH_2})
+  endif()
 endmacro()
