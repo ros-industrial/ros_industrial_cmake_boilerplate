@@ -2,6 +2,15 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add cpack create debian source package with upload support (`#84 <https://github.com/ros-industrial/ros_industrial_cmake_boilerplate/issues/84>`_)
+* Add cpack metapackge
+* Add cpack component support
+* Add find_package component support (`#82 <https://github.com/ros-industrial/ros_industrial_cmake_boilerplate/issues/82>`_)
+* Update readme to include how to exclude code from code coverage
+* Contributors: Levi Armstrong
+
 0.4.8 (2023-07-17)
 ------------------
 * Add code coverage executable RUN_COMMAND mulit-arg to support rostest (`#80 <https://github.com/ros-industrial/ros_industrial_cmake_boilerplate/issues/80>`_)
