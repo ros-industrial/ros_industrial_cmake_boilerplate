@@ -282,11 +282,6 @@ function(make_default_package_config)
         string(APPEND ricb_pkgconfig "\n# Dependencies\n" "${ricb_dependencies}\n")
     endif()
 
-    if (ARG_HAS_TARGETS)
-        string(APPEND ricb_pkgconfig "\n# Targets\n"
-             "include(\"\${CMAKE_CURRENT_LIST_DIR}/${ARG_COMPONENT}-targets.cmake\")\n")
-    endif()
-
     if (ARG_SUPPORTED_COMPONENTS)
       string(REPLACE ";" " " supported_components_string "${ARG_SUPPORTED_COMPONENTS}")
       string(APPEND ricb_pkgconfig "\n# Components\n"
@@ -317,6 +312,11 @@ function(make_default_package_config)
           get_filename_component(CFG_EXTRA_FILENAME ${extra_config} NAME BASE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
           string(APPEND ricb_pkgconfig "include(\"\${CMAKE_CURRENT_LIST_DIR}/${CFG_EXTRA_FILENAME}\")\n")
         endforeach()
+    endif()
+
+    if (ARG_HAS_TARGETS)
+        string(APPEND ricb_pkgconfig "\n# Targets\n"
+             "include(\"\${CMAKE_CURRENT_LIST_DIR}/${ARG_COMPONENT}-targets.cmake\")\n")
     endif()
 
     file(WRITE ${ARG_CONFIG_FILE} ${ricb_pkgconfig})
