@@ -192,6 +192,13 @@ macro(cpack_component_package)
   set(CPACK_COMPONENT_${PROJECT_NAME_UPPER}_DEPENDS ${ARG_COMPONENT_DEPENDS})
 
   include(CPack)
+
+  # Run checks
+  foreach(COMPONENT ${CPACK_COMPONENTS_ALL})
+    if(COMPONENT STREQUAL CMAKE_INSTALL_DEFAULT_COMPONENT_NAME)
+      message(FATAL_ERROR "${PROJECT_NAME} is using cpack with components, but has objects installed with out a defined component")
+    endif()
+  endforeach()
 endmacro()
 
 # Configure components for cpack
@@ -395,6 +402,9 @@ macro(cpack_debian_source_package)
     endif()
 
     foreach(COMPONENT ${CPACK_COMPONENTS_ALL})
+      if(COMPONENT STREQUAL CMAKE_INSTALL_DEFAULT_COMPONENT_NAME)
+        message(FATAL_ERROR "${PROJECT_NAME} is using cpack with components, but has objects installed with out a defined component")
+      endif()
       string(TOUPPER ${COMPONENT} UPPER_COMPONENT)
       unset(DEPENDS)
       foreach(DEP ${CPACK_COMPONENT_${UPPER_COMPONENT}_DEPENDS})
