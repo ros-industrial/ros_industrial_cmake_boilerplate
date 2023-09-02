@@ -218,8 +218,10 @@ Configure package for cpack which does not leverage components
    * README_FILE      - The package readme
    * PACKAGE_PREFIX   - The package prefix applied to all cpack generated files
 * Multi Value Args:
-   * LINUX_DEPENDS     - The linux dependencies required via apt install
-   * WINDOWS_DEPENDS   - The windows dependencies required via nuget install
+   * LINUX_BUILD_DEPENDS   - The linux build dependencies required via apt install (If not provided LINUX_DEPENDS is used)
+   * WINDOWS_BUILD_DEPENDS - The windows build dependencies required via nuget install (If not provided WINDOWS_DEPENDS is used)
+   * LINUX_DEPENDS         - The linux dependencies required via apt install
+   * WINDOWS_DEPENDS       - The windows dependencies required via nuget install
 
 .. code-block:: cmake
 
@@ -260,9 +262,11 @@ Configure components for cpack
    * DESCRIPTION    - The package description
    * PACKAGE_PREFIX - The package prefix applied to all cpack generated files
 * Multi Value Args:
-   * LINUX_DEPENDS     - The linux dependencies required via apt install
-   * WINDOWS_DEPENDS   - The windows dependencies required via nuget install
-   * COMPONENT_DEPENDS - The component dependencies required from this package
+   * LINUX_BUILD_DEPENDS   - The linux build dependencies required via apt install (If not provided LINUX_DEPENDS is used)
+   * WINDOWS_BUILD_DEPENDS - The windows build dependencies required via nuget install (If not provided WINDOWS_DEPENDS is used)
+   * LINUX_DEPENDS         - The linux dependencies required via apt install
+   * WINDOWS_DEPENDS       - The windows dependencies required via nuget install
+   * COMPONENT_DEPENDS     - The component dependencies required from this package
 
 .. code-block:: cmake
 
@@ -285,6 +289,8 @@ Configure package leveraging components for cpack
    * LICENSE_FILE     - The package license file
    * README_FILE      - The package readme
    * PACKAGE_PREFIX   - The package prefix applied to all cpack generated files
+* Multi Value Args:
+   * COMPONENT_DEPENDS - The component dependencies required from this package
 
 .. code-block:: cmake
 
@@ -294,6 +300,54 @@ Configure package leveraging components for cpack
      DESCRIPTION ${pkg_extracted_description}
      LICENSE_FILE ${CMAKE_CURRENT_LIST_DIR}/../LICENSE
      README_FILE ${CMAKE_CURRENT_LIST_DIR}/../README.md)
+
+
+Configure Debian Source Package
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Create debian source package leveraging cpack for upload to ppa like launchpad.net
+
+* One Value Args:
+   * CHANGLELOG (Required)         - The file path to the package CHANGELOG.rst
+   * PACKAGE_PREFIX (Optional)     - The package prefix applied to all cpack generated files
+   * UPLOAD (Optional)             - Indicate if it should be uploaded to ppa
+   * DEBIAN_INCREMENT              - The debian increment to be used, default is zero
+   * DPUT_HOST (Optional/Required) - The ppa to upload to. Only required if UPLOAD is enabled
+   * DPUT_CONFIG_IN (Optional)     - The dput config.in file. If not provide one is created.
+* Multi Value Args:
+   * DISTRIBUTIONS - The linux distrabution to deploy
+* Leveraged CPack Variable: When using the cpack macros above these are automatically set
+   * CPACK_PACKAGE_DESCRIPTION (Required)
+   * CPACK_PACKAGE_VERSION (Required)
+   * CPACK_PACKAGE_DESCRIPTION_FILE (Optional)
+   * CPACK_SOURCE_IGNORE_FILES (Optional)
+   * CPACK_DEBIAN_PACKAGE_NAME (Required)
+   * CPACK_DEBIAN_PACKAGE_SECTION (Required)
+   * CPACK_DEBIAN_PACKAGE_PRIORITY (Required)
+   * CPACK_DEBIAN_PACKAGE_MAINTAINER (Required)
+   * CPACK_DEBIAN_PACKAGE_MAINTAINER_NAME (Required)
+   * CPACK_DEBIAN_PACKAGE_MAINTAINER_EMAIL (Required)
+   * CPACK_DEBIAN_PACKAGE_ARCHITECTURE (Required)
+   * CPACK_DEBIAN_PACKAGE_DESCRIPTION (Optional)
+   * CPACK_DEBIAN_PACKAGE_BUILD_DEPENDS (Optional)
+   * CPACK_DEBIAN_PACKAGE_DEPENDS (Optional)
+   * CPACK_DEBIAN_PACKAGE_HOMEPAGE (Optional)
+   * CPACK_COMPONENT_<COMPONENT>_DEPENDS (Reqired if components exist and enabled)
+   * CPACK_DEBIAN_<COMPONENT>_PACKAGE_ARCHITECTURE (Reqired if components exist and enabled)
+   * CPACK_DEBIAN_<COMPONENT>_DESCRIPTION (Reqired if components exist and enabled)
+   * CPACK_DEBIAN_<COMPONENT>_PACKAGE_ARCHITECTURE (Reqired if components exist and enabled)
+   * CPACK_DEBIAN_<COMPONENT>_PACKAGE_DEPENDS (Reqired if components exist and enabled)
+   * CPACK_DEBIAN_<COMPONENT>_PACKAGE_BUILD_DEPENDS (Reqired if components exist and enabled)
+
+
+.. code-block:: cmake
+
+   cpack_debian_source_package(
+     CHANGLELOG ${CMAKE_CURRENT_LIST_DIR}/CHANGELOG.rst
+     UPLOAD ${RICB_PACKAGE_SOURCE_UPLOAD}
+     DPUT_HOST ${RICB_PACKAGE_SOURCE_DPUT_HOST}
+     DEBIAN_INCREMENT ${RICB_PACKAGE_SOURCE_DEBIAN_INCREMENT}
+     DISTRIBUTIONS ${RICB_PACKAGE_SOURCE_DISTRIBUTIONS}
+   )
 
 
 Configure (Pure CMake Package)

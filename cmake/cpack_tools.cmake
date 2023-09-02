@@ -39,8 +39,10 @@ set(RICB_CPACK_TOOLS_DIR ${CMAKE_CURRENT_LIST_DIR})
 #   * README_FILE      - The package readme
 #   * PACKAGE_PREFIX   - The package prefix applied to all cpack generated files
 # Multi Value Args:
-#   * LINUX_DEPENDS     - The linux dependencies required via apt install
-#   * WINDOWS_DEPENDS   - The windows dependencies required via nuget install
+#   * LINUX_BUILD_DEPENDS   - The linux build dependencies required via apt install (If not provided LINUX_DEPENDS is used)
+#   * WINDOWS_BUILD_DEPENDS - The windows build dependencies required via nuget install (If not provided WINDOWS_DEPENDS is used)
+#   * LINUX_DEPENDS         - The linux dependencies required via apt install
+#   * WINDOWS_DEPENDS       - The windows dependencies required via nuget install
 macro(cpack)
   set(oneValueArgs
       VERSION
@@ -88,15 +90,24 @@ macro(cpack)
     set(CPACK_DEBIAN_PACKAGE_MAINTAINER "${CPACK_DEBIAN_PACKAGE_MAINTAINER_NAME} <${CPACK_DEBIAN_PACKAGE_MAINTAINER_EMAIL}>")
     set(CPACK_DEBIAN_PACKAGE_DESCRIPTION ${ARG_DESCRIPTION})
     set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS=ON)
-
-    SET(CPACK_DEBIAN_PACKAGE_SECTION "devel")
-    SET(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
+    set(CPACK_DEBIAN_PACKAGE_SECTION "devel")
+    set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
 
     string(
       REPLACE ";"
               ", "
               CPACK_DEBIAN_PACKAGE_DEPENDS
               "${ARG_LINUX_DEPENDS}")
+
+    if(NOT ARG_LINUX_BUILD_DEPENDS)
+      set(ARG_LINUX_BUILD_DEPENDS ${ARG_LINUX_DEPENDS})
+    endif()
+
+    string(
+      REPLACE ";"
+              ", "
+              CPACK_DEBIAN_PACKAGE_BUILD_DEPENDS
+              "${ARG_LINUX_BUILD_DEPENDS}")
   elseif(WIN32)
     set(CPACK_GENERATOR "NuGet;TXZ")
     set(CPACK_PACKAGE_FILE_NAME
@@ -109,6 +120,16 @@ macro(cpack)
               ", "
               CPACK_NUGET_PACKAGE_DEPENDENCIES
               "${ARG_WINDOWS_DEPENDS}")
+
+    if(NOT ARG_WINDOWS_BUILD_DEPENDS)
+      set(ARG_WINDOWS_BUILD_DEPENDS ${ARG_WINDOWS_DEPENDS})
+    endif()
+
+    string(
+      REPLACE ";"
+              ", "
+              CPACK_NUGET_PACKAGE_BUILD_DEPENDS
+              "${ARG_WINDOWS_BUILD_DEPENDS}")
   endif()
   include(CPack)
 endmacro()
@@ -208,9 +229,11 @@ endmacro()
 #   * DESCRIPTION    - The package description
 #   * PACKAGE_PREFIX - The package prefix applied to all cpack generated files
 # Multi Value Args:
-#   * LINUX_DEPENDS     - The linux dependencies required via apt install
-#   * WINDOWS_DEPENDS   - The windows dependencies required via nuget install
-#   * COMPONENT_DEPENDS - The component dependencies required from this package
+#   * LINUX_BUILD_DEPENDS   - The linux build dependencies required via apt install (If not provided LINUX_DEPENDS is used)
+#   * WINDOWS_BUILD_DEPENDS - The windows build dependencies required via nuget install (If not provided WINDOWS_DEPENDS is used)
+#   * LINUX_DEPENDS         - The linux dependencies required via apt install
+#   * WINDOWS_DEPENDS       - The windows dependencies required via nuget install
+#   * COMPONENT_DEPENDS     - The component dependencies required from this package
 macro(cpack_component)
   set(oneValueArgs COMPONENT VERSION DESCRIPTION PACKAGE_PREFIX)
   set(multiValueArgs LINUX_DEPENDS WINDOWS_DEPENDS COMPONENT_DEPENDS)
@@ -243,12 +266,23 @@ macro(cpack_component)
               PACKAGE_DEPENDS
               "${ARG_LINUX_DEPENDS}")
 
+    if(NOT ARG_LINUX_BUILD_DEPENDS)
+      set(ARG_LINUX_BUILD_DEPENDS ${ARG_LINUX_DEPENDS})
+    endif()
+
+    string(
+      REPLACE ";"
+              ", "
+              PACKAGE_BUILD_DEPENDS
+              "${ARG_LINUX_BUILD_DEPENDS}")
+
     set(CPACK_DEBIAN_${COMPONENT_UPPER}_PACKAGE_NAME "${ARG_PACKAGE_PREFIX}${PACKAGE_NAME}-${COMPONENT_LOWER}" PARENT_SCOPE)
     set(CPACK_DEBIAN_${COMPONENT_UPPER}_FILE_NAME "${ARG_PACKAGE_PREFIX}${PACKAGE_NAME}-${COMPONENT_LOWER}_${DEB_ARCH}_linux_${ARG_VERSION}.deb" PARENT_SCOPE)
     set(CPACK_DEBIAN_${COMPONENT_UPPER}_PACKAGE_SHLIBDEPS=ON PARENT_SCOPE)
     set(CPACK_DEBIAN_${COMPONENT_UPPER}_PACKAGE_ARCHITECTURE ${DEB_ARCH} PARENT_SCOPE)
     set(CPACK_DEBIAN_${COMPONENT_UPPER}_DESCRIPTION ${ARG_DESCRIPTION} PARENT_SCOPE)
     set(CPACK_DEBIAN_${COMPONENT_UPPER}_PACKAGE_DEPENDS ${PACKAGE_DEPENDS} PARENT_SCOPE)
+    set(CPACK_DEBIAN_${COMPONENT_UPPER}_PACKAGE_BUILD_DEPENDS ${PACKAGE_BUILD_DEPENDS} PARENT_SCOPE)
   elseif(WIN32)
     string(
       REPLACE ";"
@@ -256,10 +290,21 @@ macro(cpack_component)
               PACKAGE_DEPENDS
               "${ARG_WINDOWS_DEPENDS}")
 
+    if(NOT ARG_WINDOWS_BUILD_DEPENDS)
+      set(ARG_WINDOWS_BUILD_DEPENDS ${ARG_WINDOWS_DEPENDS})
+    endif()
+
+    string(
+      REPLACE ";"
+              ", "
+              PACKAGE_BUILD_DEPENDS
+              "${ARG_WINDOWS_BUILD_DEPENDS}")
+
     set(CPACK_NUGET_${COMPONENT_UPPER}_PACKAGE_NAME "${ARG_PACKAGE_PREFIX}${PACKAGE_NAME}-${COMPONENT_LOWER}" PARENT_SCOPE)
     set(CPACK_NUGET_${COMPONENT_UPPER}_FILE_NAME "${ARG_PACKAGE_PREFIX}${PACKAGE_NAME}-${COMPONENT_LOWER}_${CMAKE_SYSTEM_PROCESSOR}_windows_${ARG_VERSION}.nupkg" PARENT_SCOPE)
     set(CPACK_NUGET_${COMPONENT_UPPER}_DESCRIPTION ${ARG_DESCRIPTION} PARENT_SCOPE)
     set(CPACK_NUGET_${COMPONENT_UPPER}_PACKAGE_DEPENDENCIES ${PACKAGE_DEPENDS} PARENT_SCOPE)
+    set(CPACK_NUGET_${COMPONENT_UPPER}_PACKAGE_BUILD_DEPENDENCIES ${PACKAGE_BUILD_DEPENDS} PARENT_SCOPE)
   endif()
 
   set(CPACK_COMPONENT_${COMPONENT_UPPER}_DEPENDS ${ARG_COMPONENT_DEPENDS} PARENT_SCOPE)
@@ -299,6 +344,9 @@ endmacro()
 #    * CPACK_COMPONENT_<COMPONENT>_DEPENDS (Reqired if components exist and enabled)
 #    * CPACK_DEBIAN_<COMPONENT>_PACKAGE_ARCHITECTURE (Reqired if components exist and enabled)
 #    * CPACK_DEBIAN_<COMPONENT>_DESCRIPTION (Reqired if components exist and enabled)
+#    * CPACK_DEBIAN_<COMPONENT>_PACKAGE_ARCHITECTURE (Reqired if components exist and enabled)
+#    * CPACK_DEBIAN_<COMPONENT>_PACKAGE_DEPENDS (Reqired if components exist and enabled)
+#    * CPACK_DEBIAN_<COMPONENT>_PACKAGE_BUILD_DEPENDS (Reqired if components exist and enabled)
 #
 macro(cpack_debian_source_package)
   set(oneValueArgs PACKAGE_PREFIX CHANGLELOG UPLOAD DEBIAN_INCREMENT DPUT_HOST DPUT_CONFIG_IN)
@@ -358,6 +406,10 @@ macro(cpack_debian_source_package)
     # debian/control
 
     set(debian_control ${DEBIAN_SOURCE_DIR}/debian/control)
+    foreach(COMPONENT ${CPACK_COMPONENTS_ALL})
+      string(TOUPPER ${COMPONENT} UPPER_COMPONENT)
+      list(APPEND CPACK_DEBIAN_PACKAGE_BUILD_DEPENDS ${CPACK_DEBIAN_${UPPER_COMPONENT}_PACKAGE_BUILD_DEPENDS})
+    endforeach(COMPONENT ${CPACK_COMPONENTS_ALL})
     list(APPEND CPACK_DEBIAN_PACKAGE_BUILD_DEPENDS "cmake" "debhelper (>= 7.0.50)")
     list(REMOVE_DUPLICATES CPACK_DEBIAN_PACKAGE_BUILD_DEPENDS)
     list(SORT CPACK_DEBIAN_PACKAGE_BUILD_DEPENDS)
@@ -387,18 +439,6 @@ macro(cpack_debian_source_package)
         "Description: ${CPACK_DEBIAN_PACKAGE_DESCRIPTION}\n"
         "${deb_long_description}"
       )
-
-      file(APPEND ${debian_control}
-        "\n\n"
-        "Package: ${CPACK_DEBIAN_PACKAGE_NAME}-dbg\n"
-        "Priority: extra\n"
-        "Section: debug\n"
-        "Architecture: any\n"
-        "Depends: ${CPACK_DEBIAN_PACKAGE_NAME} (= \${binary:Version}), \${shlibs:Depends}, \${misc:Depends}\n"
-        "Description: ${CPACK_DEBIAN_PACKAGE_DESCRIPTION}\n"
-        "${deb_long_description}"
-        "\n"
-      )
     endif()
 
     foreach(COMPONENT ${CPACK_COMPONENTS_ALL})
@@ -414,6 +454,14 @@ macro(cpack_debian_source_package)
           set(DEPENDS "${ARG_PACKAGE_PREFIX}${CPACK_DEBIAN_PACKAGE_NAME}-${DEP}")
         endif()
       endforeach(DEP ${CPACK_COMPONENT_${UPPER_COMPONENT}_DEPENDS})
+
+      foreach(DEP ${CPACK_DEBIAN_${UPPER_COMPONENT}_PACKAGE_DEPENDS})
+        if (DEPENDS)
+          set(DEPENDS "${DEPENDS}, ${DEP}")
+        else()
+          set(DEPENDS "${DEP}")
+        endif()
+      endforeach(DEP ${CPACK_DEBIAN_${UPPER_COMPONENT}_PACKAGE_DEPENDS})
 
       if(PROJECT_NAME STREQUAL COMPONENT)
         set(COMPONENT_PACKAGE_NAME ${CPACK_DEBIAN_PACKAGE_NAME})
@@ -454,15 +502,14 @@ macro(cpack_debian_source_package)
         "\tDESTDIR=\"$(CURDIR)/debian/${CPACK_DEBIAN_PACKAGE_NAME}\" dh_auto_configure -- -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_SHARED_LIBS=ON -DPACKAGE_TGZ=OFF"
         "\n\noverride_dh_auto_install:\n"
         "\tdh_auto_install --destdir=\"$(CURDIR)/debian/${CPACK_DEBIAN_PACKAGE_NAME}\" --buildsystem=cmake"
-        "\n\noverride_dh_strip:\n"
-        "\tdh_strip --dbg-package=${CPACK_DEBIAN_PACKAGE_NAME}-dbg"
+        "\n"
     )
 
     execute_process(COMMAND chmod +x ${debian_rules})
 
     ##############################################################################
     # debian/compat
-    file(WRITE ${DEBIAN_SOURCE_DIR}/debian/compat "7")
+    file(WRITE ${DEBIAN_SOURCE_DIR}/debian/compat "9")
 
     ##############################################################################
     # debian/source/format
@@ -571,7 +618,7 @@ macro(cpack_debian_source_package)
       )
 
     add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/Debian/${DISTRI}/${DEB_SOURCE_CHANGES}
-      COMMAND ${DEBUILD_EXECUTABLE} --no-tgz-check -S
+      COMMAND ${DEBUILD_EXECUTABLE} --no-tgz-check -S -d
       WORKING_DIRECTORY ${DEBIAN_SOURCE_DIR}
       )
     add_custom_target(debuild_${DISTRI} ALL
