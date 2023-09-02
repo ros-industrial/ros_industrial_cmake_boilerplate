@@ -2,6 +2,11 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add CPack Build Depends for creating debian source package
+* Contributors: Levi Armstrong
+
 0.5.1 (2023-09-02)
 ------------------
 * Add check for component Unspecified and generate error if using cpack with components (`#85 <https://github.com/ros-industrial/ros_industrial_cmake_boilerplate/issues/85>`_)
