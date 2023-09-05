@@ -2,6 +2,12 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Make _supported_components capitalized in package config with components
+* Make supported_components unique in package config to avoid conflict
+* Contributors: Levi Armstrong
+
 0.5.2 (2023-09-02)
 ------------------
 * Add CPack Build Depends for creating debian source package
