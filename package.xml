@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>ros_industrial_cmake_boilerplate</name>
-  <version>0.5.2</version>
+  <version>0.5.3</version>
   <description>Contains boilerplate cmake script, macros and utils</description>
   <maintainer email="levi.armstrong@gmail.com">Levi Armstrong</maintainer>
   <maintainer email="michael.ripperger@swri.org">Michael Ripperger</maintainer>

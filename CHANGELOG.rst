@@ -2,8 +2,8 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.5.3 (2023-09-04)
+------------------
 * Make _supported_components capitalized in package config with components
 * Make supported_components unique in package config to avoid conflict
 * Contributors: Levi Armstrong
