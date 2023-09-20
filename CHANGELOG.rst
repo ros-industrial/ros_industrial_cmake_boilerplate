@@ -2,6 +2,11 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fixed error message when extracting maintainer information
+* Contributors: Michael Ripperger
+
 0.5.3 (2023-09-04)
 ------------------
 * Make _supported_components capitalized in package config with components
