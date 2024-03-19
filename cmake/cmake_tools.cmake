@@ -244,6 +244,36 @@ macro(install_pkgxml)
   install(FILES package.xml DESTINATION share/${PROJECT_NAME} COMPONENT ${ARG_COMPONENT})
 endmacro()
 
+# Catkin does not support modern cmake so it only operates on variables.
+# This requires us to generate a extras config which calls find package
+# and appends the exported targets to the appropriate catkin variables.
+function(make_catkin_extras_config)
+  set(oneValueArgs CONFIG_FILE)
+  set(multiValueArgs DEPENDENCIES EXPORT_TARGETS)
+  cmake_parse_arguments(ARG "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  if (ARG_DEPENDENCIES)
+      set(find_dep_cmds "include(CMakeFindDependencyMacro)")
+      foreach(dep IN LISTS ARG_DEPENDENCIES)
+          list(APPEND find_dep_cmds "find_dependency(${dep})")
+      endforeach()
+
+      # Convert list to newline-separated string
+      string(REPLACE ";" "\n" ricb_extras_dependencies "${find_dep_cmds}")
+      string(APPEND ricb_extras_config "\n# Dependencies\n" "${ricb_extras_dependencies}\n")
+  endif()
+
+  if (ARG_EXPORT_TARGETS)
+    string(APPEND ricb_extras_config "\n# Append Targets\n")
+    foreach(target IN LISTS ARG_EXPORT_TARGETS)
+       string(APPEND ricb_extras_config "list(APPEND catkin_LIBRARIES ${target})\n")
+       string(APPEND ricb_extras_config "list(APPEND ${PROJECT_NAME}_LIBRARIES ${target})\n")
+    endforeach()
+  endif()
+
+  file(WRITE ${ARG_CONFIG_FILE} ${ricb_extras_config})
+endfunction()
+
 # Create a default *-config.cmake.in with simple dependency finding
 function(make_default_package_config)
     set(oneValueArgs CONFIG_NAME CONFIG_FILE COMPONENT HAS_TARGETS )
