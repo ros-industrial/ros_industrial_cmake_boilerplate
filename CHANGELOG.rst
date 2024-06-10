@@ -2,8 +2,8 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.0 (2024-06-10)
+------------------
 * Add catkin required variables _INCULDE_DIRS and _LIBRARIES
 * Update package_debian.yml
 * Update libraries into  package_nuget.yml
