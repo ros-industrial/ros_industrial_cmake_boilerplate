@@ -2,6 +2,15 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add catkin required variables _INCULDE_DIRS and _LIBRARIES
+* Update package_debian.yml
+* Update libraries into  package_nuget.yml
+  updated actions/checkout
+  updated ilammy/msvc-dev-cmd
+* Contributors: Levi Armstrong, mosfet80
+
 0.5.4 (2023-09-20)
 ------------------
 * Fixed error message when extracting maintainer information
