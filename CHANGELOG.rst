@@ -2,8 +2,8 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.1 (2024-06-21)
+------------------
 * Add sanitizer tools (`#96 <https://github.com/ros-industrial/ros_industrial_cmake_boilerplate/issues/96>`_)
 * Move individual tools to there own files
 * Contributors: Levi Armstrong
