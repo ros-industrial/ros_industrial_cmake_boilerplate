@@ -51,6 +51,28 @@ It will create two cmake variable **${PREFIX_ARG}_extracted_name** and **${PREFI
 Clang Tidy
 ==========
 
+This CMake macro will add clang-tidy to all targets
+
+.. code-block:: cmake
+
+   clang_tidy(ARGUMENTS ${ARGN})
+   # or
+   clang_tidy(ARGUMENTS ${ARGN} ENABLE ${USER_ENABLE_ARG})
+
+This CMake macro will add clang-tidy to all targets with default arguments.
+
+.. code-block:: cmake
+
+   clang_tidy(ARGUMENTS ${DEFAULT_CLANG_TIDY_CHECKS})
+   # or
+   clang_tidy(ARGUMENTS ${DEFAULT_CLANG_TIDY_CHECKS} ENABLE ${USER_ENABLE_ARG})
+
+Clears clang-tidy so it is not called on any following defined code compilation. It can be re-enabled by another call to `clang_tidy()`.
+
+.. code-block:: cmake
+
+   reset_clang_tidy()
+
 This CMake macro will add clang-tidy to a provided target.
 
 - `The clang-tidy documentation <https://clang.llvm.org/extra/clang-tidy/>`_
@@ -159,13 +181,22 @@ This CMake macro will add IWYU to all targets
 .. code-block:: cmake
 
    include_what_you_use(ARGUMENTS ${ARGN})
+   # or
+   include_what_you_use(ARGUMENTS ${ARGN} ENABLE ${USER_ENABLE_ARG})
 
 This CMake macro will add IWYU to all targets with default arguments.
 
 .. code-block:: cmake
 
    include_what_you_use(ARGUMENTS ${DEFAULT_IWYU_ARGS})
+   # or
+   include_what_you_use(ARGUMENTS ${DEFAULT_IWYU_ARGS} ENABLE ${USER_ENABLE_ARG})
 
+Clears IWYU so it is not called on any following defined code compilation. It can be re-enabled by another call to `include_what_you_use()`.
+
+.. code-block:: cmake
+
+   reset_include_what_you_use()
 
 CppCheck
 ========
@@ -193,13 +224,22 @@ This CMake macro will add CppCheck to all targets
 .. code-block:: cmake
 
    cppcheck(ARGUMENTS ${ARGN})
-
+   # or
+   cppcheck(ARGUMENTS ${ARGN} ENABLE ${USER_ENABLE_ARG})
 
 This CMake macro will add CppCheck to all targets with default arguments.
 
 .. code-block:: cmake
 
    cppcheck(ARGUMENTS ${DEFAULT_CPPCHECK_ARGS})
+   # or
+   cppcheck(ARGUMENTS ${DEFAULT_CPPCHECK_ARGS} ENABLE ${USER_ENABLE_ARG})
+
+Clears CppCheck so it is not called on any following defined code compilation. It can be re-enabled by another call to `cppcheck()`.
+
+.. code-block:: cmake
+
+   reset_cppcheck()
 
 CPack
 =====

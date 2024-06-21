@@ -11,10 +11,13 @@ install(FILES cmake/create_debian_changelog.py DESTINATION lib/cmake/${PROJECT_N
 
 configure_package(
   CFG_EXTRAS
+    cmake/clang_tidy_tools.cmake
     cmake/cmake_tools.cmake
     cmake/code_coverage.cmake
     cmake/cpack_tools.cmake
+    cmake/cppcheck_tools.cmake
     cmake/extract_package_metadata.cmake
+    cmake/iwyu_tools.cmake
 )
 
 if (RICB_PACKAGE)
