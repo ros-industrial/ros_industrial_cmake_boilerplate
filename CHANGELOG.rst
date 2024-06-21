@@ -2,6 +2,12 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add sanitizer tools (`#96 <https://github.com/ros-industrial/ros_industrial_cmake_boilerplate/issues/96>`_)
+* Move individual tools to there own files
+* Contributors: Levi Armstrong
+
 0.6.0 (2024-06-10)
 ------------------
 * Add catkin required variables _INCULDE_DIRS and _LIBRARIES
