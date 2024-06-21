@@ -18,6 +18,7 @@ configure_package(
     cmake/cppcheck_tools.cmake
     cmake/extract_package_metadata.cmake
     cmake/iwyu_tools.cmake
+    cmake/sanitizers.cmake
 )
 
 if (RICB_PACKAGE)
