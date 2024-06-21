@@ -249,12 +249,12 @@ Sanitizers are tools that perform checks during a program’s runtime and return
 A quick rundown of the tools available, and what they do:
 * `LeakSanitizer <https://clang.llvm.org/docs/LeakSanitizer.html>`_ detects memory leaks, or issues where memory is allocated and never deallocated, causing programs to slowly consume more and more memory, eventually leading to a crash.
 * `AddressSanitizer <https://clang.llvm.org/docs/AddressSanitizer.html>`_ is a fast memory error detector. It is useful for detecting most issues dealing with memory, such as:
-   * Out of bounds accesses to heap, stack, global
-   * Use after free
-   * Use after return
-   * Use after scope
-   * Double-free, invalid free
-   * Memory leaks (using LeakSanitizer)
+    * Out of bounds accesses to heap, stack, global
+    * Use after free
+    * Use after return
+    * Use after scope
+    * Double-free, invalid free
+    * Memory leaks (using LeakSanitizer)
 * `ThreadSanitizer <https://clang.llvm.org/docs/ThreadSanitizer.html>`_ detects data races for multi-threaded code.
 * `UndefinedBehaviourSanitizer <https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html>`_ detects the use of various features of C/C++ that are explicitly listed as resulting in undefined behaviour. Most notably: 
    * Using misaligned or null pointer.
