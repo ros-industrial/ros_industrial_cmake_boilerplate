@@ -247,32 +247,32 @@ Sanitizer Tools
 Sanitizers are tools that perform checks during a program’s runtime and returns issues, and as such, along with unit testing, code coverage and static analysis, is another tool to add to the programmers toolbox. And of course, like the previous tools, are tragically simple to add into any project using CMake, allowing any project and developer to quickly and easily use.
 
 A quick rundown of the tools available, and what they do:
-- `LeakSanitizer <https://clang.llvm.org/docs/LeakSanitizer.html>`_ detects memory leaks, or issues where memory is allocated and never deallocated, causing programs to slowly consume more and more memory, eventually leading to a crash.
-- `AddressSanitizer <https://clang.llvm.org/docs/AddressSanitizer.html>`_ is a fast memory error detector. It is useful for detecting most issues dealing with memory, such as:
-  - Out of bounds accesses to heap, stack, global
-  - Use after free
-  - Use after return
-  - Use after scope
-  - Double-free, invalid free
-  - Memory leaks (using LeakSanitizer)
-- `ThreadSanitizer <https://clang.llvm.org/docs/ThreadSanitizer.html>`_ detects data races for multi-threaded code.
-- `UndefinedBehaviourSanitizer <https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html>`_ detects the use of various features of C/C++ that are explicitly listed as resulting in undefined behaviour. Most notably:
-  - Using misaligned or null pointer.
-  - Signed integer overflow
-  - Conversion to, from, or between floating-point types which would overflow the destination
-  - Division by zero
-  - Unreachable code
-- `MemorySanitizer <https://clang.llvm.org/docs/MemorySanitizer.html>`_ detects uninitialized reads.
-- `Control Flow Integrity <https://clang.llvm.org/docs/ControlFlowIntegrity.html>`_ is designed to detect certain forms of undefined behaviour that can potentially allow attackers to subvert the program's control flow.
+* `LeakSanitizer <https://clang.llvm.org/docs/LeakSanitizer.html>`_ detects memory leaks, or issues where memory is allocated and never deallocated, causing programs to slowly consume more and more memory, eventually leading to a crash.
+* `AddressSanitizer <https://clang.llvm.org/docs/AddressSanitizer.html>`_ is a fast memory error detector. It is useful for detecting most issues dealing with memory, such as:
+   * Out of bounds accesses to heap, stack, global
+   * Use after free
+   * Use after return
+   * Use after scope
+   * Double-free, invalid free
+   * Memory leaks (using LeakSanitizer)
+* `ThreadSanitizer <https://clang.llvm.org/docs/ThreadSanitizer.html>`_ detects data races for multi-threaded code.
+* `UndefinedBehaviourSanitizer <https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html>`_ detects the use of various features of C/C++ that are explicitly listed as resulting in undefined behaviour. Most notably: 
+   * Using misaligned or null pointer.
+   * Signed integer overflow
+   * Conversion to, from, or between floating-point types which would overflow the destination
+   * Division by zero
+   * Unreachable code
+* `MemorySanitizer <https://clang.llvm.org/docs/MemorySanitizer.html>`_ detects uninitialized reads.
+* `Control Flow Integrity <https://clang.llvm.org/docs/ControlFlowIntegrity.html>`_ is designed to detect certain forms of undefined behaviour that can potentially allow attackers to subvert the program's control flow.
 
 These are used by declaring the `USE_SANITIZER` CMake variable as string containing any of:
-- Address
-- Memory
-- MemoryWithOrigins
-- Undefined
-- Thread
-- Leak
-- CFI
+* Address
+* Memory
+* MemoryWithOrigins
+* Undefined
+* Thread
+* Leak
+* CFI
 
 Multiple values are allowed, e.g. `-DUSE_SANITIZER=Address,Leak` but some sanitizers cannot be combined together, e.g.`-DUSE_SANITIZER=Address,Memory` will result in configuration error. The delimeter character is not required and `-DUSE_SANITIZER=AddressLeak` would work as well.
 
