@@ -2,8 +2,8 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.6.2 (2024-07-18)
+------------------
 * Fix issue where executables were being added to package libraries cmake variable
 * Contributors: Levi Armstrong
 
