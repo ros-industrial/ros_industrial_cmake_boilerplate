@@ -2,6 +2,11 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix issue where executables were being added to package libraries cmake variable
+* Contributors: Levi Armstrong
+
 0.6.1 (2024-06-21)
 ------------------
 * Add sanitizer tools (`#96 <https://github.com/ros-industrial/ros_industrial_cmake_boilerplate/issues/96>`_)
