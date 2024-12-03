@@ -56,9 +56,9 @@ macro(install_targets)
   install(TARGETS ${ARG_TARGETS}
           EXPORT ${ARG_COMPONENT}-targets
           COMPONENT ${ARG_COMPONENT}
-          RUNTIME DESTINATION bin
-          LIBRARY DESTINATION lib
-          ARCHIVE DESTINATION lib)
+          RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+          LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+          ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 endmacro()
 
 # Install the package.xml used for catkin and ament
