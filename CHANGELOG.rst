@@ -2,6 +2,11 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Update install_targets to leverage cmake install dir variables so they may be overriden
+* Contributors: Levi Armstrong
+
 0.6.2 (2024-07-18)
 ------------------
 * Fix issue where executables were being added to package libraries cmake variable
