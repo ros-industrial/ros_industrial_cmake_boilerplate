@@ -250,8 +250,14 @@ macro(cpack_component)
             PACKAGE_NAME
             ${PROJECT_NAME})
 
-  string(TOUPPER ${ARG_COMPONENT} COMPONENT_UPPER)
-  string(TOLOWER ${ARG_COMPONENT} COMPONENT_LOWER)
+  string(
+    REPLACE "_"
+            "-"
+            COMPONENT_NAME
+            ${ARG_COMPONENT})
+
+  string(TOUPPER ${COMPONENT_NAME} COMPONENT_UPPER)
+  string(TOLOWER ${COMPONENT_NAME} COMPONENT_LOWER)
 
   if(UNIX)
     if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
