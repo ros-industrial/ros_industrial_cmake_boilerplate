@@ -2,6 +2,11 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Replace underscores with dashes in component names for CPack
+* Contributors: Michael Ripperger
+
 0.6.3 (2024-12-03)
 ------------------
 * Update install_targets to leverage cmake install dir variables so they may be overriden
