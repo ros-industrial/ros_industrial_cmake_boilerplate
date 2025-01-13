@@ -10,17 +10,20 @@ on:
 
 jobs:
   Debian:
-    name: Ubuntu Focal
+    name: ${{ matrix.distro }}
     runs-on: ubuntu-latest
-    container: ubuntu:20.04
+    container:
+      image: ubuntu:${{ matrix.distro }}
+      env:
+        DEBIAN_FRONTEND: noninteractive
+    strategy:
+      fail-fast: false
+      matrix:
+        distro: [focal, jammy, noble]
     steps:
       - uses: actions/checkout@v4
         with:
           path: workspace/src/ros_industrial_cmake_boilerplate
-
-      - name: Create artifacts directory
-        run: |
-          mkdir -p ${{ github.workspace }}/artifacts
 
       - name: Install dependencies
         working-directory: workspace
@@ -40,19 +43,24 @@ jobs:
           colcon build --event-handlers console_direct+ --cmake-args -DCMAKE_BUILD_TYPE=Release -DRICB_PACKAGE=ON
           if [ $? -ne 0 ]; then exit 1; fi
 
+      - name: Create artifacts directory
+        run: |
+          mkdir -p $GITHUB_WORKSPACE/artifacts
+
       - name: Package
         working-directory: workspace/build/ros_industrial_cmake_boilerplate
+        shell: bash
         run: |
           cpack --config CPackConfig.cmake
-          cp ./*.deb ${{ github.workspace }}/artifacts
-          cp ./*.tar.xz ${{ github.workspace }}/artifacts
+          cp ./*.deb $GITHUB_WORKSPACE/artifacts
+          cp ./*.tar.xz $GITHUB_WORKSPACE/artifacts
 
       - uses: actions/upload-artifact@v4
         with:
-          name: debian_package
+          name: debian_package_${{ matrix.distro }}
           path: ${{ github.workspace }}/artifacts/*.deb
 
       - uses: actions/upload-artifact@v4
         with:
-          name: archive_package
+          name: archive_package_${{ matrix.distro }}
           path: ${{ github.workspace }}/artifacts/*.tar.xz
