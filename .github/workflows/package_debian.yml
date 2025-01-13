@@ -36,7 +36,7 @@ jobs:
         uses: tesseract-robotics/colcon-action@v9
         with:
           ccache-enabled: false
-          add-ros-ppa: false
+          add-ros-ppa: true
           rosdep-enabled: false
           target-path: target_ws/src
           target-args: --cmake-args -DCMAKE_BUILD_TYPE=Release -DRICB_PACKAGE=ON
