@@ -24,10 +24,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          path: workspace/src
+          path: target_ws/src
 
       - name: Install dependencies
-        working-directory: workspace
         run: |
           export DEBIAN_FRONTEND=noninteractive
           apt update -q
@@ -48,7 +47,7 @@ jobs:
           mkdir -p $GITHUB_WORKSPACE/artifacts
 
       - name: Package
-        working-directory: workspace/build/ros_industrial_cmake_boilerplate
+        working-directory: target_ws/build/ros_industrial_cmake_boilerplate
         shell: bash
         run: |
           cpack --config CPackConfig.cmake
