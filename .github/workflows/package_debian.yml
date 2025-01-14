@@ -24,7 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          path: workspace/src/ros_industrial_cmake_boilerplate
+          path: workspace/src
 
       - name: Install dependencies
         working-directory: workspace
