@@ -2,8 +2,8 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.1 (2025-01-14)
+------------------
 * Add script to run cpack
 * Fix debian cpack pipeline (`#100 <https://github.com/ros-industrial/ros_industrial_cmake_boilerplate/issues/100>`_)
 * Contributors: Levi Armstrong
