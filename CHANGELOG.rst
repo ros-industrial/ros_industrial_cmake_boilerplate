@@ -2,6 +2,12 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Add script to run cpack
+* Fix debian cpack pipeline (`#100 <https://github.com/ros-industrial/ros_industrial_cmake_boilerplate/issues/100>`_)
+* Contributors: Levi Armstrong
+
 0.7.0 (2025-01-11)
 ------------------
 * Replace underscores with dashes in component names for CPack
