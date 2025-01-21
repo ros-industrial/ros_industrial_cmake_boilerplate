@@ -2,6 +2,11 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix bug in cpack_component cmake variable naming
+* Contributors: Levi Armstrong
+
 0.7.1 (2025-01-14)
 ------------------
 * Add script to run cpack
