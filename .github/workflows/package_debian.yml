@@ -32,7 +32,7 @@ jobs:
           apt install -q -y clang-tidy
 
       - name: Build
-        uses: tesseract-robotics/colcon-action@v9
+        uses: tesseract-robotics/colcon-action@v10
         with:
           ccache-enabled: false
           add-ros-ppa: true
