@@ -2,6 +2,11 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Expose ability to set clang-tidy versions
+* Contributors: Levi Armstrong
+
 0.7.2 (2025-01-21)
 ------------------
 * Fix bug in cpack_component cmake variable naming
