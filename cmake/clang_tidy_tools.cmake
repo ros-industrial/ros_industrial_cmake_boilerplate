@@ -50,7 +50,12 @@ set(DEFAULT_CLANG_TIDY_CHECKS
 mark_as_advanced(DEFAULT_CLANG_TIDY_CHECKS)
 
 # Find relevant programs
-find_program(CLANG_TIDY_EXE NAMES clang-tidy-14 clang-tidy-13 clang-tidy-12 clang-tidy-11 clang-tidy-10 clang-tidy-9 clang-tidy-8 clang-tidy)
+if(NOT DEFINED CLANG_TIDY_NAMES)
+  set(CLANG_TIDY_NAMES clang-tidy-21 clang-tidy-20 clang-tidy-19 clang-tidy-18 clang-tidy-17 clang-tidy-16 clang-tidy-15 clang-tidy-14 clang-tidy-13 clang-tidy-12 clang-tidy-11 clang-tidy-10 clang-tidy-9 clang-tidy-8 clang-tidy)
+endif()
+mark_as_advanced(FORCE CLANG_TIDY_NAMES)
+
+find_program(CLANG_TIDY_EXE NAMES ${CLANG_TIDY_NAMES})
 mark_as_advanced(FORCE CLANG_TIDY_EXE)
 if(CLANG_TIDY_EXE)
   message(STATUS "clang-tidy found: ${CLANG_TIDY_EXE}")
