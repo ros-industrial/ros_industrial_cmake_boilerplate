@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5.0)
+cmake_minimum_required(VERSION 3.10)
 include(cmake/extract_package_metadata.cmake)
 
 extract_package_metadata(pkg)
