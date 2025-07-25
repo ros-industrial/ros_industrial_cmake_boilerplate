@@ -2,8 +2,8 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.7.4 (2025-07-25)
+------------------
 * fix cmake deprecation, cmake version < then 3.10 is deprecated
 * Update package_debian.yml
 * Contributors: Levi Armstrong, mosfet80
