@@ -2,6 +2,11 @@
 Changelog for package ros_industrial_cmake_boilerplate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* package.xml: fix the license string to correct SPDX format
+* Contributors: Jan Vermaete
+
 0.7.4 (2025-07-25)
 ------------------
 * fix cmake deprecation, cmake version < then 3.10 is deprecated
